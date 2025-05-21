@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Accueil - MinecraftQuest</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="container">
+    <h1>🏠 Bienvenue sur MinecraftQuest</h1>
+    <p>Connecté en tant que : <strong th:text="${#authentication?.username ?: 'Guest'}">username</strong></p>
+
+    <div style="margin-top: 2rem;">
+        <a th:href="@{/logout}">
+            <button>Se déconnecter</button>
+        </a>
+    </div>
+
+    <div style="margin-top: 2rem;">
+        <p>🎯 Tu peux maintenant créer, compléter et défier d'autres joueurs sur des quêtes !</p>
+        <p>🧩 À venir : système de quêtes, leaderboard, défis, titres...</p>
+    </div>
+</div>
+</body>
+</html>

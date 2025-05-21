@@ -1,11 +1,16 @@
 package re.ethernitydev.mcquest.model;
 
 import jakarta.persistence.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 @Entity
-public class User {
+public class User implements UserDetails {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -22,72 +27,50 @@ public class User {
     private int xp = 0;
     private int level = 1;
 
-    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "author")
     private List<Quest> createdQuests;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<QuestCompletion> questCompletions;
-
-    @OneToMany(mappedBy = "challenger")
-    private List<Challenge> challengesSent;
-
-    @OneToMany(mappedBy = "target")
-    private List<Challenge> challengesReceived;
-
-    public Title getTitle() {
-        return title;
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return Collections.emptyList();
     }
 
-    public void setTitle(Title title) {
-        this.title = title;
+    @Override
+    public boolean isAccountNonExpired() { return true; }
+
+    @Override
+    public boolean isAccountNonLocked() { return true; }
+
+    @Override
+    public boolean isCredentialsNonExpired() { return true; }
+
+    @Override
+    public boolean isEnabled() { return true; }
+
+    public Long getId() {
+        return id;
     }
 
-    public List<Challenge> getChallengesReceived() {
-        return challengesReceived;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public void setChallengesReceived(List<Challenge> challengesReceived) {
-        this.challengesReceived = challengesReceived;
+    @Override
+    public String getUsername() {
+        return username;
     }
 
-    public List<Challenge> getChallengesSent() {
-        return challengesSent;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
-    public void setChallengesSent(List<Challenge> challengesSent) {
-        this.challengesSent = challengesSent;
+    @Override
+    public String getPassword() {
+        return password;
     }
 
-    public List<Quest> getCreatedQuests() {
-        return createdQuests;
-    }
-
-    public void setCreatedQuests(List<Quest> createdQuests) {
-        this.createdQuests = createdQuests;
-    }
-
-    public int getLevel() {
-        return level;
-    }
-
-    public void setLevel(int level) {
-        this.level = level;
-    }
-
-    public int getXp() {
-        return xp;
-    }
-
-    public List<QuestCompletion> getQuestCompletions() {
-        return questCompletions;
-    }
-
-    public void setQuestCompletions(List<QuestCompletion> questCompletions) {
-        this.questCompletions = questCompletions;
-    }
-
-    public void setXp(int xp) {
-        this.xp = xp;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getEmail() {
@@ -98,33 +81,39 @@ public class User {
         this.email = email;
     }
 
-    public String getPassword() {
-        return password;
+    public int getXp() {
+        return xp;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setXp(int xp) {
+        this.xp = xp;
     }
 
-    public String getUsername() {
-        return username;
+    public int getLevel() {
+        return level;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setLevel(int level) {
+        this.level = level;
     }
 
-    public Long getId() {
-        return id;
+    public List<Quest> getCreatedQuests() {
+        return createdQuests;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setCreatedQuests(List<Quest> createdQuests) {
+        this.createdQuests = createdQuests;
     }
 
     @ManyToOne
     @JoinColumn(name = "title_id")
     private Title title;
 
+    public Title getTitle() {
+        return title;
+    }
 
+    public void setTitle(Title title) {
+        this.title = title;
+    }
 }
