@@ -2,6 +2,8 @@ package re.ethernitydev.mcquest.model;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 public class Quest {
     @Id
@@ -15,5 +17,8 @@ public class Quest {
     @ManyToOne(optional = false)
     @JoinColumn(name = "author_id")
     private User author;
+
+    @OneToMany(mappedBy = "quest", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Participation> participations;
 
 }
