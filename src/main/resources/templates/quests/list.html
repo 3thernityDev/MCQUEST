@@ -1,0 +1,38 @@
+<!-- templates/quests/list.html -->
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+  <title>Quêtes</title>
+</head>
+<body>
+<main layout:fragment="content">
+  <div class="container">
+    <h1>🗺️ Quêtes disponibles</h1>
+
+    <div th:if="${quests.isEmpty()}">
+      <p>Aucune quête disponible pour le moment.</p>
+    </div>
+
+    <div class="grid grid-2" th:each="quest : ${quests}">
+      <div class="card">
+        <div class="card-header">
+          <h3 th:text="${quest.title}">Titre</h3>
+          <p>Créée par <span th:text="${quest.author.username}">Auteur</span></p>
+        </div>
+        <div class="card-content">
+          <p th:text="${quest.description}">Description</p>
+        </div>
+        <div class="card-footer">
+                    <span class="badge badge-primary">
+                        <i class="fas fa-star"></i> <span th:text="${quest.xpReward}">100</span> XP
+                    </span>
+          <a th:href="@{/quests/{id}(id=${quest.id})}" class="btn btn-small">Voir</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+</body>
+</html>

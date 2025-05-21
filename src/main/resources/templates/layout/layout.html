@@ -1,0 +1,46 @@
+<!-- templates/layout.html -->
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title layout:title-pattern="$DECORATOR_TITLE - MinecraftQuest">MinecraftQuest</title>
+
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="navbar">
+  <div class="nav-container">
+    <div class="nav-brand">
+      <a th:href="@{/home}">🎮 MinecraftQuest</a>
+    </div>
+    <div class="nav-menu">
+      <a th:href="@{/home}" class="nav-link"><i class="fas fa-home"></i> Accueil</a>
+      <a th:href="@{/quests}" class="nav-link"><i class="fas fa-scroll"></i> Quêtes</a>
+      <a th:href="@{/challenges}" class="nav-link"><i class="fas fa-trophy"></i> Défis</a>
+      <a th:href="@{/leaderboard}" class="nav-link"><i class="fas fa-ranking-star"></i> Classement</a>
+      <a th:href="@{/profile}" class="nav-link"><i class="fas fa-user"></i> Profil</a>
+      <form th:action="@{/logout}" method="post" class="logout-form">
+        <button type="submit" class="nav-link logout-btn"><i class="fas fa-sign-out-alt"></i> Déconnexion</button>
+      </form>
+    </div>
+  </div>
+</nav>
+
+<!-- Page Content -->
+<main class="main-content" layout:fragment="content"></main>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="footer-content">
+    <p>&copy; 2025 MinecraftQuest - Créé avec ❤️ pour la communauté Minecraft</p>
+  </div>
+</footer>
+
+</body>
+</html>

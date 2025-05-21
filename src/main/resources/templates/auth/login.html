@@ -1,0 +1,26 @@
+<!-- templates/login.html -->
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Connexion</title>
+</head>
+<body>
+<main layout:fragment="content">
+    <div class="container">
+        <h1>🔐 Connexion</h1>
+        <form th:action="@{/login}" method="post">
+            <label for="username">Nom d'utilisateur</label>
+            <input type="text" id="username" name="username" required>
+
+            <label for="password">Mot de passe</label>
+            <input type="password" id="password" name="password" required>
+
+            <button type="submit">Se connecter</button>
+        </form>
+        <p>Pas encore de compte ? <a th:href="@{/register}">Inscris-toi ici</a></p>
+    </div>
+</main>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<!-- templates/profile.html -->
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+  <title>Mon Profil</title>
+</head>
+<body>
+<main layout:fragment="content">
+  <div class="container">
+    <h1>👤 Mon Profil</h1>
+
+    <div class="profile-box">
+      <p><strong>Nom :</strong> <span th:text="${user.username}">Pseudo</span></p>
+      <p><strong>Email :</strong> <span th:text="${user.email}">email@example.com</span></p>
+      <p><strong>Niveau :</strong> <span th:text="${user.level}">1</span></p>
+      <p><strong>XP :</strong> <span th:text="${user.xp}">0</span></p>
+      <p><strong>Titre :</strong> <span th:text="${user.title}">Novice</span></p>
+    </div>
+
+    <h2>🗺️ Quêtes complétées</h2>
+    <ul>
+      <li th:each="quest : ${user.completedQuests}" th:text="${quest.title}">Titre</li>
+    </ul>
+
+    <h2>📜 Historique des défis</h2>
+    <ul>
+      <li th:each="challenge : ${user.pastChallenges}">
+        <span th:text="${challenge.quest.title}">Quête</span> -
+        <span th:text="${challenge.status}">Statut</span>
+      </li>
+    </ul>
+  </div>
+</main>
+</body>
+</html>

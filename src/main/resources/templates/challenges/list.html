@@ -1,0 +1,40 @@
+<!-- templates/challenges/list.html -->
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+  <title>Défis</title>
+</head>
+<body>
+<main layout:fragment="content">
+  <div class="container">
+    <h1>⚔️ Défis en cours</h1>
+
+    <div th:if="${challenges.isEmpty()}">
+      <p>Tu n'as pas encore de défi actif.</p>
+    </div>
+
+    <div class="grid grid-2" th:each="challenge : ${challenges}">
+      <div class="card">
+        <div class="card-header">
+          <h3 th:text="${challenge.quest.title}">Défi</h3>
+          <p>Défié par <span th:text="${challenge.challenger.username}">Joueur</span></p>
+        </div>
+        <div class="card-content">
+          <p th:text="${challenge.quest.description}">Description</p>
+          <small>
+            <i class="fas fa-clock"></i>
+            Expire le <span th:text="${#temporals.format(challenge.expirationDate, 'dd/MM/yyyy HH:mm')}">date</span>
+          </small>
+        </div>
+        <div class="card-footer">
+          <span class="badge badge-warning" th:text="${challenge.status}">EN_COURS</span>
+          <a th:href="@{/challenges/{id}(id=${challenge.id})}" class="btn btn-small">Voir</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+</body>
+</html>

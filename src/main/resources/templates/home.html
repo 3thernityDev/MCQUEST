@@ -1,25 +1,167 @@
+<!-- templates/home.html -->
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="fr" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
 <head>
-    <meta charset="UTF-8">
-    <title>Accueil - MinecraftQuest</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <title>Accueil</title>
 </head>
 <body>
-<div class="container">
-    <h1>🏠 Bienvenue sur MinecraftQuest</h1>
-    <p>Connecté en tant que : <strong th:text="${#authentication?.username ?: 'Guest'}">username</strong></p>
+<main layout:fragment="content">
 
-    <div style="margin-top: 2rem;">
-        <a th:href="@{/logout}">
-            <button>Se déconnecter</button>
-        </a>
+    <!-- Messages d'alerte -->
+    <div th:if="${success}" class="alert alert-success">
+        <i class="fas fa-check-circle"></i>
+        <span th:text="${success}"></span>
+    </div>
+    <div th:if="${error}" class="alert alert-error">
+        <i class="fas fa-exclamation-circle"></i>
+        <span th:text="${error}"></span>
     </div>
 
-    <div style="margin-top: 2rem;">
-        <p>🎯 Tu peux maintenant créer, compléter et défier d'autres joueurs sur des quêtes !</p>
-        <p>🧩 À venir : système de quêtes, leaderboard, défis, titres...</p>
+    <!-- Header de bienvenue -->
+    <div class="container">
+        <h1>🏠 Bienvenue sur MinecraftQuest</h1>
+        <p>Salut <strong th:text="${#authentication.name}">Joueur</strong> ! Prêt pour de nouvelles aventures ?</p>
     </div>
-</div>
+
+    <!-- Statistiques du joueur -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-value" th:text="${userStats?.level ?: 1}">1</div>
+            <div class="stat-label">Niveau</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" th:text="${userStats?.xp ?: 0}">0</div>
+            <div class="stat-label">XP Total</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" th:text="${userStats?.completedQuests ?: 0}">0</div>
+            <div class="stat-label">Quêtes Complétées</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" th:text="${userStats?.activeChallenges ?: 0}">0</div>
+            <div class="stat-label">Défis Actifs</div>
+        </div>
+    </div>
+
+    <!-- Actions rapides -->
+    <div class="container">
+        <h2>🚀 Actions rapides</h2>
+        <div class="grid grid-3">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-scroll"></i> Quêtes
+                    </h3>
+                </div>
+                <div class="card-content">
+                    <p>Découvre et complète des quêtes épiques créées par la communauté.</p>
+                </div>
+                <div class="card-footer">
+                    <a th:href="@{/quests}" class="btn">Voir les quêtes</a>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-plus"></i> Créer une quête
+                    </h3>
+                </div>
+                <div class="card-content">
+                    <p>Laisse libre cours à ta créativité et crée une quête unique.</p>
+                </div>
+                <div class="card-footer">
+                    <a th:href="@{/quests/create}" class="btn">Créer maintenant</a>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-trophy"></i> Défis
+                    </h3>
+                </div>
+                <div class="card-content">
+                    <p>Lance des défis à tes amis ou accepte ceux des autres joueurs.</p>
+                </div>
+                <div class="card-footer">
+                    <a th:href="@{/challenges}" class="btn">Voir les défis</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quêtes récentes -->
+    <div class="container" th:if="${recentQuests != null and !recentQuests.isEmpty()}">
+        <h2>📋 Quêtes récentes</h2>
+        <div class="grid grid-2">
+            <div th:each="quest : ${recentQuests}" class="card">
+                <div class="card-header">
+                    <h3 class="card-title" th:text="${quest.title}">Titre de la quête</h3>
+                    <p class="card-subtitle">
+                        Par <span th:text="${quest.author.username}">Auteur</span>
+                    </p>
+                </div>
+                <div class="card-content">
+                    <p th:text="${quest.description}">Description de la quête</p>
+                </div>
+                <div class="card-footer">
+                    <span class="badge badge-primary">
+                        <i class="fas fa-star"></i>
+                        <span th:text="${quest.xpReward}">100</span> XP
+                    </span>
+                    <a th:href="@{/quests/{id}(id=${quest.id})}" class="btn btn-small">
+                        Voir détails
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Défis actifs -->
+    <div class="container" th:if="${activeChallenges != null and !activeChallenges.isEmpty()}">
+        <h2>⚔️ Tes défis actifs</h2>
+        <div class="grid grid-2">
+            <div th:each="challenge : ${activeChallenges}" class="card">
+                <div class="card-header">
+                    <h3 class="card-title" th:text="${challenge.quest.title}">Défi</h3>
+                    <p class="card-subtitle">
+                        Défié par <span th:text="${challenge.challenger.username}">Challenger</span>
+                    </p>
+                </div>
+                <div class="card-content">
+                    <p th:text="${challenge.quest.description}">Description du défi</p>
+                    <p>
+                        <small class="status-in-progress">
+                            <i class="fas fa-clock"></i>
+                            Expire le <span th:text="${#temporals.format(challenge.expirationDate, 'dd/MM/yyyy HH:mm')}">Date</span>
+                        </small>
+                    </p>
+                </div>
+                <div class="card-footer">
+                    <span class="badge badge-warning">En cours</span>
+                    <a th:href="@{/challenges/{id}(id=${challenge.id})}" class="btn btn-small">
+                        Voir défi
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Message si pas de contenu -->
+    <div class="container" th:if="${(recentQuests == null or recentQuests.isEmpty()) and (activeChallenges == null or activeChallenges.isEmpty())}">
+        <div class="card" style="text-align: center; padding: 3rem;">
+            <h3>🌟 Prêt pour l'aventure ?</h3>
+            <p style="margin: 1rem 0;">Tu n'as pas encore de quêtes ou de défis actifs.</p>
+            <p>Commence ton voyage en explorant les quêtes disponibles ou en créant la tienne !</p>
+            <div style="margin-top: 2rem;">
+                <a th:href="@{/quests}" class="btn btn-large">Explorer les quêtes</a>
+            </div>
+        </div>
+    </div>
+
+</main>
 </body>
 </html>
