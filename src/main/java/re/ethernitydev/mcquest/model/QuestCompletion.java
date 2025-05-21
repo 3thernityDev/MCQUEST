@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 @Table(
         uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "quest_id"})
 )
-public class Participation {
+public class QuestCompletion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

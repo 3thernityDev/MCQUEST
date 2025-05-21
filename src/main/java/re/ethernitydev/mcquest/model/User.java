@@ -26,7 +26,7 @@ public class User {
     private List<Quest> createdQuests;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Participation> participations;
+    private List<QuestCompletion> questCompletions;
 
     @OneToMany(mappedBy = "challenger")
     private List<Challenge> challengesSent;
@@ -58,14 +58,6 @@ public class User {
         this.challengesSent = challengesSent;
     }
 
-    public List<Participation> getParticipations() {
-        return participations;
-    }
-
-    public void setParticipations(List<Participation> participations) {
-        this.participations = participations;
-    }
-
     public List<Quest> getCreatedQuests() {
         return createdQuests;
     }
@@ -84,6 +76,14 @@ public class User {
 
     public int getXp() {
         return xp;
+    }
+
+    public List<QuestCompletion> getQuestCompletions() {
+        return questCompletions;
+    }
+
+    public void setQuestCompletions(List<QuestCompletion> questCompletions) {
+        this.questCompletions = questCompletions;
     }
 
     public void setXp(int xp) {

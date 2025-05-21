@@ -52,12 +52,12 @@ public class Quest {
         this.author = author;
     }
 
-    public List<Participation> getParticipations() {
-        return participations;
+    public List<QuestCompletion> getQuestCompletions() {
+        return questCompletions;
     }
 
-    public void setParticipations(List<Participation> participations) {
-        this.participations = participations;
+    public void setQuestCompletions(List<QuestCompletion> questCompletions) {
+        this.questCompletions = questCompletions;
     }
 
     private String description;
@@ -68,6 +68,6 @@ public class Quest {
     private User author;
 
     @OneToMany(mappedBy = "quest", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Participation> participations;
+    private List<QuestCompletion> questCompletions;
 
 }
