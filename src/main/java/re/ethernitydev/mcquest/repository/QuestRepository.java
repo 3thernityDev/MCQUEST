@@ -13,4 +13,6 @@ public interface QuestRepository extends JpaRepository<Quest, Long> {
     @Query("SELECT q FROM Quest q WHERE q.id NOT IN " +
             "(SELECT qc.quest.id FROM QuestCompletion qc WHERE qc.user = :user)")
     List<Quest> findAvailableQuestsByUser(User user);
+    List<Quest> findTop5ByOrderByCreatedAtDesc();
+
 }

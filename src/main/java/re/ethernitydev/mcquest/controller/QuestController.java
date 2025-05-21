@@ -54,18 +54,21 @@ public class QuestController {
     }
 
     @GetMapping("/{id}")
-    public String getQuestDetails(@PathVariable Long id, Model model, Authentication authentication) {
+    public String getQuestDetails(@PathVariable Long id,
+                                  Model model,
+                                  Authentication authentication) {
         Quest quest = questService.getQuestById(id).orElse(null);
         User currentUser = userService.getUserByUsername(authentication.getName()).orElse(null);
 
         if (quest != null && currentUser != null) {
-            boolean hasCompleted = questService.hasUserCompletedQuest(currentUser, quest);
+            boolean completed = questService.hasUserCompletedQuest(currentUser, quest);
             model.addAttribute("quest", quest);
-            model.addAttribute("hasCompleted", hasCompleted);
+            model.addAttribute("completedByUser", completed);
             model.addAttribute("currentUser", currentUser);
         }
         return "quests/details";
     }
+
 
     @PostMapping("/{id}/complete")
     public String completeQuest(@PathVariable Long id, Authentication authentication) {

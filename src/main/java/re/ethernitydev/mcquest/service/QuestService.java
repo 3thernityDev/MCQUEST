@@ -66,4 +66,9 @@ public class QuestService {
     public boolean hasUserCompletedQuest(User user, Quest quest) {
         return questCompletionRepository.findByUserAndQuest(user, quest).isPresent();
     }
+
+    public List<Quest> getRecentQuests() {
+        return questRepository.findTop5ByOrderByCreatedAtDesc();
+    }
+
 }

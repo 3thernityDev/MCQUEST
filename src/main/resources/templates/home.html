@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="fr" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout}">
+      layout:decorate="~{layout}" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <title>Accueil</title>
 </head>
@@ -22,7 +22,7 @@
     <!-- Header de bienvenue -->
     <div class="container">
         <h1>🏠 Bienvenue sur MinecraftQuest</h1>
-        <p>Salut <strong th:text="${#authentication.name}">Joueur</strong> ! Prêt pour de nouvelles aventures ?</p>
+        <p>Salut <strong sec:authentication="name">Joueur</strong> !</p>
     </div>
 
     <!-- Statistiques du joueur -->

@@ -1,0 +1,38 @@
+<!-- templates/quests/details.html -->
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{/layout}">
+<head>
+  <title th:text="${quest.title}">Détail de la quête</title>
+</head>
+<body>
+<main layout:fragment="content">
+  <div class="container">
+    <h1 th:text="${quest.title}">Titre de la quête</h1>
+    <p th:text="${quest.description}">Description de la quête</p>
+    <p><strong>XP attribué :</strong> <span th:text="${quest.xpReward}">0</span></p>
+    <p><strong>Auteur :</strong> <span th:text="${quest.author.username}">Auteur</span></p>
+
+    <div class="actions">
+      <!-- Formulaire POST pour compléter la quête -->
+      <form th:if="${!completedByUser}"
+            th:action="@{/quests/{id}/complete(id=${quest.id})}"
+            method="post">
+        <button type="submit" class="btn">Compléter la quête</button>
+      </form>
+      <div th:if="${completedByUser}">
+                <span class="badge badge-success">
+                    <i class="fas fa-check-circle"></i> Déjà complétée
+                </span>
+      </div>
+    </div>
+
+    <div class="mt-4">
+      <a th:href="@{/quests}" class="btn btn-secondary">← Retour à la liste</a>
+    </div>
+  </div>
+</main>
+</body>
+</html>
