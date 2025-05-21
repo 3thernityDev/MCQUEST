@@ -34,6 +34,94 @@ public class User {
     @OneToMany(mappedBy = "target")
     private List<Challenge> challengesReceived;
 
+    public Title getTitle() {
+        return title;
+    }
+
+    public void setTitle(Title title) {
+        this.title = title;
+    }
+
+    public List<Challenge> getChallengesReceived() {
+        return challengesReceived;
+    }
+
+    public void setChallengesReceived(List<Challenge> challengesReceived) {
+        this.challengesReceived = challengesReceived;
+    }
+
+    public List<Challenge> getChallengesSent() {
+        return challengesSent;
+    }
+
+    public void setChallengesSent(List<Challenge> challengesSent) {
+        this.challengesSent = challengesSent;
+    }
+
+    public List<Participation> getParticipations() {
+        return participations;
+    }
+
+    public void setParticipations(List<Participation> participations) {
+        this.participations = participations;
+    }
+
+    public List<Quest> getCreatedQuests() {
+        return createdQuests;
+    }
+
+    public void setCreatedQuests(List<Quest> createdQuests) {
+        this.createdQuests = createdQuests;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
+    public int getXp() {
+        return xp;
+    }
+
+    public void setXp(int xp) {
+        this.xp = xp;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     @ManyToOne
     @JoinColumn(name = "title_id")
     private Title title;
