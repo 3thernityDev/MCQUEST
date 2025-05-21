@@ -24,13 +24,21 @@ public class ChallengeService {
     @Autowired
     private QuestService questService;
 
-    public Challenge createChallenge(User challenger, User target, Quest quest, int durationHours) {
+    /**
+     * Crée un défi avec une date d'expiration précise.
+     * @param challenger l'utilisateur qui lance le défi
+     * @param target l'utilisateur défié
+     * @param quest la quête associée au défi
+     * @param expirationDate date et heure d'expiration du défi
+     * @return le défi sauvegardé
+     */
+    public Challenge createChallenge(User challenger, User target, Quest quest, LocalDateTime expirationDate) {
         Challenge challenge = new Challenge();
         challenge.setChallenger(challenger);
         challenge.setTarget(target);
         challenge.setQuest(quest);
         challenge.setStartDate(LocalDateTime.now());
-        challenge.setExpirationDate(LocalDateTime.now().plusHours(durationHours));
+        challenge.setExpirationDate(expirationDate);
         challenge.setStatus(ChallengeStatus.IN_PROGRESS);
 
         return challengeRepository.save(challenge);
@@ -61,12 +69,12 @@ public class ChallengeService {
 
         if (success) {
             challenge.setStatus(ChallengeStatus.SUCCESS);
-            // Le target gagne l'XP, le challenger en perd
+
             userService.addXP(challenge.getTarget(), xpAmount);
-            userService.removeXP(challenge.getChallenger(), xpAmount / 2); // Perd moins que ce qu'il gagne
+            userService.removeXP(challenge.getChallenger(), xpAmount / 2);
         } else {
             challenge.setStatus(ChallengeStatus.FAILED);
-            // Le challenger gagne l'XP, le target en perd
+
             userService.addXP(challenge.getChallenger(), xpAmount);
             userService.removeXP(challenge.getTarget(), xpAmount / 2);
         }
@@ -80,7 +88,7 @@ public class ChallengeService {
 
         for (Challenge challenge : activeChallenges) {
             if (challenge.getExpirationDate().isBefore(now)) {
-                completeChallenge(challenge, false); // Échec par expiration
+                completeChallenge(challenge, false);
             }
         }
     }

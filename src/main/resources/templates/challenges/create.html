@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{/layout}">
+<head>
+  <title>Créer un défi</title>
+</head>
+<body>
+<main layout:fragment="content">
+  <div class="container">
+    <h1>⚔️ Créer un défi</h1>
+    <form th:action="@{/challenges/create}" method="post">
+      <div class="form-group">
+        <label for="questId">Quête :</label>
+        <select id="questId" name="questId" class="form-control">
+          <option th:each="q : ${quests}"
+                  th:value="${q.id}"
+                  th:text="${q.title}">
+          </option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="targetId">Défié :</label>
+        <select id="targetId" name="targetId" class="form-control">
+          <option th:each="u : ${players}"
+                  th:value="${u.id}"
+                  th:text="${u.username}">
+          </option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Durée :</label>
+        <div class="duration-inputs">
+          <input type="number" name="durationValue" min="1" required class="form-control" style="width: 6rem; display: inline-block;"/>
+          <select name="durationUnit" class="form-control" style="width: 8rem; display: inline-block;">
+            <option value="SECONDS">Secondes</option>
+            <option value="HOURS">Heures</option>
+            <option value="DAYS">Jours</option>
+          </select>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary">
+        <i class="fas fa-plus"></i> Créer le défi
+      </button>
+    </form>
+  </div>
+</main>
+</body>
+</html>

@@ -43,4 +43,37 @@
 </footer>
 
 </body>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // Fonction générique pour démarrer un timer sur un <span>
+    function startCountdown(el) {
+      const targetTime = new Date(el.getAttribute('data-expiration')).getTime();
+      function update() {
+        const now = Date.now();
+        let diff = Math.max(0, targetTime - now);
+        const hours   = Math.floor(diff / (1000 * 60 * 60));
+        diff %= (1000 * 60 * 60);
+        const minutes = Math.floor(diff / (1000 * 60));
+        diff %= (1000 * 60);
+        const seconds = Math.floor(diff / 1000);
+
+        el.textContent =
+                String(hours).padStart(2,'0') + 'h ' +
+                String(minutes).padStart(2,'0') + 'm ' +
+                String(seconds).padStart(2,'0') + 's';
+
+        if (targetTime <= now) {
+          clearInterval(timerId);
+          el.textContent = 'Expiré';
+        }
+      }
+      update();
+      const timerId = setInterval(update, 1000);
+    }
+
+    document.querySelectorAll('.countdown-timer')
+            .forEach(el => startCountdown(el));
+  });
+</script>
+
 </html>

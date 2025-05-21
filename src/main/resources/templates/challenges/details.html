@@ -1,0 +1,53 @@
+<!-- templates/challenges/details.html -->
+<!DOCTYPE html>
+<html lang="fr" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title th:text="'Défi: ' + ${challenge.quest.title}">Détail du défi</title>
+</head>
+<body>
+<main layout:fragment="content">
+    <div class="container">
+        <h1 th:text="${challenge.quest.title}">Titre du défi</h1>
+        <p>
+            <strong>Lancé par :</strong>
+            <span th:text="${challenge.challenger.username}">Challenger</span>
+        </p>
+        <p>
+            <strong>Défié :</strong>
+            <span th:text="${challenge.target.username}">Opposant</span>
+        </p>
+        <p>
+            <strong>Description :</strong>
+            <span th:text="${challenge.quest.description}">Description</span>
+        </p>
+        <p>
+            <strong>Temps restant :</strong>
+            <span class="countdown-timer"
+                  th:attr="data-expiration=${#temporals.format(challenge.expirationDate, 'yyyy-MM-dd''T''HH:mm:ss')}">
+  Chargement…
+</span>
+
+        </p>
+        <p>
+            <strong>Statut :</strong>
+            <span th:text="${challenge.status}">EN_COURS</span>
+        </p>
+
+        <div th:if="${challenge.status=='IN_PROGRESS' and #authentication.name == challenge.target.username}">
+            <form th:action="@{/challenges/complete/{id}(id=${challenge.id})}" method="post">
+                <button type="submit" class="btn">Terminer le défi</button>
+            </form>
+        </div>
+
+        <div class="mt-4">
+            <a th:href="@{/challenges}" class="btn btn-secondary">
+                ← Retour aux défis
+            </a>
+        </div>
+    </div>
+</main>
+</body>
+</html>

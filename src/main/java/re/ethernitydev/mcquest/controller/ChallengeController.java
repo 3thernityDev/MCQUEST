@@ -4,7 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import re.ethernitydev.mcquest.model.Challenge;
 import re.ethernitydev.mcquest.model.Quest;
 import re.ethernitydev.mcquest.model.User;
@@ -12,81 +16,66 @@ import re.ethernitydev.mcquest.service.ChallengeService;
 import re.ethernitydev.mcquest.service.QuestService;
 import re.ethernitydev.mcquest.service.UserService;
 
+import java.time.LocalDateTime;
+
 @Controller
 @RequestMapping("/challenges")
 public class ChallengeController {
 
     @Autowired
-    private ChallengeService challengeService;
+    private QuestService questService;
 
     @Autowired
     private UserService userService;
 
     @Autowired
-    private QuestService questService;
+    private ChallengeService challengeService;
 
     @GetMapping
-    public String getChallenges(Model model, Authentication authentication) {
-        User currentUser = userService.getUserByUsername(authentication.getName()).orElse(null);
-        if (currentUser != null) {
-            model.addAttribute("receivedChallenges", challengeService.getChallengesByTarget(currentUser));
-            model.addAttribute("sentChallenges", challengeService.getChallengesByChallenger(currentUser));
-            model.addAttribute("activeChallenges", challengeService.getActiveChallengesByTarget(currentUser));
-        }
+    public String listChallenges(Model model, Authentication auth) {
+        User user = userService.getUserByUsername(auth.getName()).orElse(null);
+        model.addAttribute("challenges", challengeService.getActiveChallengesByTarget(user));
         return "challenges/list";
     }
 
     @GetMapping("/create")
-    public String showCreateForm(Model model, @RequestParam(required = false) Long questId) {
-        model.addAttribute("users", userService.getAllUsers());
-        model.addAttribute("quests", questService.getAllQuests());
-        model.addAttribute("selectedQuestId", questId);
+    public String showCreateForm(Model model, Authentication auth) {
+        model.addAttribute("challengeForm", new Challenge());
+        User currentUser = userService.getUserByUsername(auth.getName()).orElse(null);
+        model.addAttribute("quests", questService.getAvailableQuests(currentUser));
+        model.addAttribute("players", userService.getAllUsers());
         return "challenges/create";
     }
 
     @PostMapping("/create")
-    public String createChallenge(@RequestParam Long targetUserId,
-                                  @RequestParam Long questId,
-                                  @RequestParam int durationHours,
-                                  Authentication authentication) {
-        User challenger = userService.getUserByUsername(authentication.getName()).orElse(null);
-        User target = userService.getUserById(targetUserId).orElse(null);
+    public String createChallenge(@RequestParam("questId") Long questId,
+                                  @RequestParam("targetId") Long targetId,
+                                  @RequestParam("durationValue") int durationValue,
+                                  @RequestParam("durationUnit") String durationUnit,
+                                  Authentication auth) {
+        User challenger = userService.getUserByUsername(auth.getName()).orElse(null);
         Quest quest = questService.getQuestById(questId).orElse(null);
-
-        if (challenger != null && target != null && quest != null && !challenger.equals(target)) {
-            challengeService.createChallenge(challenger, target, quest, durationHours);
+        User target = userService.getUserById(targetId).orElse(null);
+        if (challenger != null && quest != null && target != null) {
+            LocalDateTime now = LocalDateTime.now();
+            LocalDateTime expiration;
+            switch (durationUnit) {
+                case "SECONDS": expiration = now.plusSeconds(durationValue); break;
+                case "HOURS":   expiration = now.plusHours(durationValue);   break;
+                case "DAYS":    expiration = now.plusDays(durationValue);    break;
+                default:         expiration = now.plusHours(durationValue);   break;
+            }
+            challengeService.createChallenge(challenger, target, quest, expiration);
         }
-
         return "redirect:/challenges";
     }
 
     @GetMapping("/{id}")
-    public String getChallengeDetails(@PathVariable Long id, Model model, Authentication authentication) {
+    public String viewChallengeDetails(@PathVariable Long id,
+                                       Model model,
+                                       Authentication auth) {
         Challenge challenge = challengeService.getChallengeById(id).orElse(null);
-        User currentUser = userService.getUserByUsername(authentication.getName()).orElse(null);
-
-        if (challenge != null) {
-            model.addAttribute("challenge", challenge);
-            model.addAttribute("currentUser", currentUser);
-            model.addAttribute("canComplete", currentUser != null &&
-                    (currentUser.equals(challenge.getTarget()) || currentUser.equals(challenge.getChallenger())));
-        }
-
+        model.addAttribute("challenge", challenge);
         return "challenges/details";
-    }
-
-    @PostMapping("/{id}/complete")
-    public String completeChallenge(@PathVariable Long id,
-                                    @RequestParam boolean success,
-                                    Authentication authentication) {
-        Challenge challenge = challengeService.getChallengeById(id).orElse(null);
-        User currentUser = userService.getUserByUsername(authentication.getName()).orElse(null);
-
-        if (challenge != null && currentUser != null &&
-                (currentUser.equals(challenge.getTarget()) || currentUser.equals(challenge.getChallenger()))) {
-            challengeService.completeChallenge(challenge, success);
-        }
-
-        return "redirect:/challenges/" + id;
     }
 }
