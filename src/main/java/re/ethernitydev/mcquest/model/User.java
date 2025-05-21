@@ -28,5 +28,11 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Participation> participations;
 
+    @OneToMany(mappedBy = "challenger")
+    private List<Challenge> challengesSent;
+
+    @OneToMany(mappedBy = "target")
+    private List<Challenge> challengesReceived;
+
 
 }
