@@ -34,5 +34,9 @@ public class User {
     @OneToMany(mappedBy = "target")
     private List<Challenge> challengesReceived;
 
+    @ManyToOne
+    @JoinColumn(name = "title_id")
+    private Title title;
+
 
 }
