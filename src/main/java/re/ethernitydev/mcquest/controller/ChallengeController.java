@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import re.ethernitydev.mcquest.model.Challenge;
+import re.ethernitydev.mcquest.model.ChallengeStatus;
 import re.ethernitydev.mcquest.model.Quest;
 import re.ethernitydev.mcquest.model.User;
 import re.ethernitydev.mcquest.service.ChallengeService;
@@ -34,10 +35,16 @@ public class ChallengeController {
     @GetMapping
     public String listChallenges(Model model, Authentication auth) {
         User user = userService.getUserByUsername(auth.getName()).orElse(null);
-        model.addAttribute("challenges", challengeService.getActiveChallengesByTarget(user));
+
+        model.addAttribute("challenges",
+                challengeService.getActiveChallengesByTarget(user));
+        model.addAttribute("successfulChallenges",
+                challengeService.getChallengesByTargetAndStatus(user, ChallengeStatus.SUCCESS));
+        model.addAttribute("failedChallenges",
+                challengeService.getChallengesByTargetAndStatus(user, ChallengeStatus.FAILED));
+
         return "challenges/list";
     }
-
     @GetMapping("/create")
     public String showCreateForm(Model model, Authentication auth) {
         model.addAttribute("challengeForm", new Challenge());

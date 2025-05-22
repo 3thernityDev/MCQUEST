@@ -3,33 +3,34 @@
 <html lang="fr" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title layout:title-pattern="$DECORATOR_TITLE - MinecraftQuest">MinecraftQuest</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title layout:title-pattern="$DECORATOR_TITLE - MinecraftQuest">MinecraftQuest</title>
 
-  <link rel="stylesheet" th:href="@{/css/style.css}">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
 
 <!-- Navigation -->
 <nav class="navbar">
-  <div class="nav-container">
-    <div class="nav-brand">
-      <a th:href="@{/home}">🎮 MinecraftQuest</a>
+    <div class="nav-container">
+        <div class="nav-brand">
+            <a th:href="@{/home}">🎮 MinecraftQuest</a>
+        </div>
+        <div class="nav-menu">
+            <a th:href="@{/home}" class="nav-link"><i class="fas fa-home"></i> Accueil</a>
+            <a th:href="@{/quests}" class="nav-link"><i class="fas fa-scroll"></i> Quêtes</a>
+            <a th:href="@{/challenges}" class="nav-link"><i class="fas fa-trophy"></i> Défis</a>
+            <a th:href="@{/leaderboard}" class="nav-link"><i class="fas fa-ranking-star"></i> Classement</a>
+            <a th:href="@{/profile}" class="nav-link"><i class="fas fa-user"></i> Profil</a>
+            <form th:action="@{/logout}" method="post" class="logout-form">
+                <button type="submit" class="nav-link logout-btn"><i class="fas fa-sign-out-alt"></i> Déconnexion
+                </button>
+            </form>
+        </div>
     </div>
-    <div class="nav-menu">
-      <a th:href="@{/home}" class="nav-link"><i class="fas fa-home"></i> Accueil</a>
-      <a th:href="@{/quests}" class="nav-link"><i class="fas fa-scroll"></i> Quêtes</a>
-      <a th:href="@{/challenges}" class="nav-link"><i class="fas fa-trophy"></i> Défis</a>
-      <a th:href="@{/leaderboard}" class="nav-link"><i class="fas fa-ranking-star"></i> Classement</a>
-      <a th:href="@{/profile}" class="nav-link"><i class="fas fa-user"></i> Profil</a>
-      <form th:action="@{/logout}" method="post" class="logout-form">
-        <button type="submit" class="nav-link logout-btn"><i class="fas fa-sign-out-alt"></i> Déconnexion</button>
-      </form>
-    </div>
-  </div>
 </nav>
 
 <!-- Page Content -->
@@ -37,43 +38,45 @@
 
 <!-- Footer -->
 <footer class="footer">
-  <div class="footer-content">
-    <p>&copy; 2025 MinecraftQuest - Créé avec ❤️ pour la communauté Minecraft</p>
-  </div>
+    <div class="footer-content">
+        <p>&copy; 2025 MinecraftQuest - Créé avec ❤️ pour la communauté Minecraft</p>
+    </div>
 </footer>
 
 </body>
+<!-- script de countdown + progression -->
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    // Fonction générique pour démarrer un timer sur un <span>
-    function startCountdown(el) {
-      const targetTime = new Date(el.getAttribute('data-expiration')).getTime();
-      function update() {
-        const now = Date.now();
-        let diff = Math.max(0, targetTime - now);
-        const hours   = Math.floor(diff / (1000 * 60 * 60));
-        diff %= (1000 * 60 * 60);
-        const minutes = Math.floor(diff / (1000 * 60));
-        diff %= (1000 * 60);
-        const seconds = Math.floor(diff / 1000);
+    document.addEventListener('DOMContentLoaded', () => {
+        const timerEl = document.querySelector('.countdown-timer');
+        const barEl = document.querySelector('.progress-inner');
+        if (!timerEl || !barEl) return;
 
-        el.textContent =
-                String(hours).padStart(2,'0') + 'h ' +
-                String(minutes).padStart(2,'0') + 'm ' +
-                String(seconds).padStart(2,'0') + 's';
+        const start = new Date(timerEl.dataset.start);
+        const expiry = new Date(timerEl.dataset.expiration);
 
-        if (targetTime <= now) {
-          clearInterval(timerId);
-          el.textContent = 'Expiré';
+        function update() {
+            const now = new Date();
+            // countdown
+            let diff = expiry - now;
+            if (diff < 0) diff = 0;
+            const h = Math.floor(diff / 3600000);
+            const m = Math.floor((diff % 3600000) / 60000);
+            const s = Math.floor((diff % 60000) / 1000);
+            timerEl.textContent =
+                String(h).padStart(2, '0') + 'h ' +
+                String(m).padStart(2, '0') + 'm ' +
+                String(s).padStart(2, '0') + 's';
+
+            // progression
+            const total = expiry - start;
+            const elapsed = now - start;
+            const pct = Math.max(0, Math.min(1, elapsed / total));
+            barEl.style.width = (pct * 100) + '%';
         }
-      }
-      update();
-      const timerId = setInterval(update, 1000);
-    }
 
-    document.querySelectorAll('.countdown-timer')
-            .forEach(el => startCountdown(el));
-  });
+        update();
+        setInterval(update, 1000);
+    });
 </script>
 
 </html>

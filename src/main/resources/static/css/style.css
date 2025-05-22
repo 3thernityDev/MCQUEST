@@ -99,6 +99,124 @@ body {
     margin: 2rem 0;
 }
 
+/* Header Actions */
+.header-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 3rem;
+}
+
+.page-title {
+    color: #f57c00;
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+/* Section Titles */
+.section-title {
+    color: #f57c00;
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* ===========================================
+   CAROUSEL STYLES
+   =========================================== */
+
+/* Carousel Container */
+.carousel-container {
+    position: relative;
+    margin-bottom: 3rem;
+}
+
+.carousel {
+    overflow: hidden;
+    border-radius: 16px;
+    position: relative;
+}
+
+.carousel-track {
+    display: flex;
+    transition: transform 0.5s ease;
+    gap: 1.5rem;
+}
+
+.carousel-slide {
+    min-width: calc(33.333% - 1rem);
+    flex-shrink: 0;
+}
+
+/* Carousel Navigation */
+.carousel-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(245, 124, 0, 0.9);
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    z-index: 10;
+}
+
+.carousel-nav:hover {
+    background: #f57c00;
+    transform: translateY(-50%) scale(1.1);
+}
+
+.carousel-nav.prev {
+    left: -25px;
+}
+
+.carousel-nav.next {
+    right: -25px;
+}
+
+.carousel-nav:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Carousel Dots */
+.carousel-dots {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+}
+
+.carousel-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(245, 124, 0, 0.3);
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.carousel-dot.active {
+    background: #f57c00;
+    transform: scale(1.2);
+}
+
+/* ===========================================
+   END CAROUSEL STYLES
+   =========================================== */
+
 /* Grilles */
 .grid {
     display: grid;
@@ -154,6 +272,13 @@ body {
     margin-bottom: 1rem;
 }
 
+.card-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
 .card-footer {
     border-top: 1px solid rgba(245, 124, 0, 0.3);
     padding-top: 1rem;
@@ -170,6 +295,7 @@ body {
     font-size: 0.8rem;
     font-weight: 600;
     text-transform: uppercase;
+    white-space: nowrap;
 }
 
 .badge-primary {
@@ -397,6 +523,27 @@ h3 {
     font-weight: 600;
 }
 
+/* Progress bar (pour les défis) */
+.progress {
+    width: 100%;
+    height: 8px;
+    background: #333;
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 1rem 0;
+}
+
+.progress-sm {
+    height: 6px;
+}
+
+.progress-inner {
+    width: 0;
+    height: 100%;
+    background: linear-gradient(90deg, #f57c00, #ff9800);
+    transition: width 1s linear;
+}
+
 /* Tables */
 .table {
     width: 100%;
@@ -484,7 +631,192 @@ a:hover {
     color: #5cbf60;
 }
 
+/* conteneur général */
+.challenge-page {
+    padding: 2rem;
+    display: flex;
+    justify-content: center;
+}
+
+/* carte du défi */
+.challenge-card {
+    background: #1e1e1e;
+    border: 1px solid #333;
+    border-radius: 1rem;
+    max-width: 700px;
+    width: 100%;
+    box-shadow: 0 0 1rem rgba(0,0,0,0.6);
+    color: #eee;
+    overflow: hidden;
+}
+
+/* header */
+.challenge-header {
+    background: #2a2a2a;
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #333;
+}
+.challenge-header h1 {
+    font-size: 1.8rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.challenge-status .badge {
+    font-weight: bold;
+    padding: 0.4rem 0.8rem;
+    border-radius: 0.5rem;
+}
+
+/* corps */
+.challenge-body {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+.info-pair {
+    display: flex;
+    gap: 2rem;
+}
+.info-pair label,
+.challenge-desc label,
+.challenge-timer label {
+    font-size: 0.85rem;
+    color: #bbb;
+    text-transform: uppercase;
+}
+.info-pair p,
+.challenge-desc p,
+.challenge-timer p {
+    margin: 0.3rem 0 0;
+    font-size: 1rem;
+}
+
+/* description */
+.challenge-desc p {
+    background: #2a2a2a;
+    padding: 1rem;
+    border-left: 4px solid #555;
+    border-radius: 0.25rem;
+}
+
+/* timer */
+.challenge-timer i {
+    margin-right: 0.5rem;
+}
+
+.timer {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #f57c00;
+}
+
+/* footer */
+.challenge-footer {
+    padding: 1rem 1.5rem;
+    background: #2a2a2a;
+    border-top: 1px solid #333;
+    text-align: right;
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+.inline-form {
+    display: inline;
+}
+
+/* badges */
+.badge.warning { background: #f0ad4e; color: #1e1e1e; }
+.badge.success { background: #5cb85c; color: white; }
+.badge.error   { background: #d9534f; color: white; }
+
+/* boutons (extraits existants, ajustez si besoin) */
+.btn { display: inline-flex; align-items: center; gap: 0.4rem; text-decoration: none; border-radius: 0.4rem; padding: 0.6rem 1rem; font-weight: 600; }
+.btn-primary   { background: #ff8c00; color: #1e1e1e; }
+.btn-secondary { background: #555;   color: #eee; }
+.btn-success   { background: #5cb85c; color: #fff; }
+.btn i { font-size: 1.1rem; }
+
+/* Conteneur principal des cartes de défis */
+.challenges-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+
+.challenges-cards .card {
+    flex: 1 1 calc(33.333% - 1.5rem);
+    /* 3 colonnes au max, puis s'adapte */
+    box-sizing: border-box;
+}
+
+/* History section */
+.history-section {
+    margin-top: 4rem;
+}
+
+.history-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+/* Small text */
+.small-text {
+    font-size: 0.9rem;
+    color: #ccc;
+    margin: 0;
+}
+
+.description {
+    color: #eee;
+    margin: 0;
+}
+
+/* Empty state */
+.empty-state {
+    text-align: center;
+    padding: 3rem;
+    color: #999;
+}
+
+.empty-state i {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+.empty-msg {
+    text-align: center;
+    color: #999;
+    font-style: italic;
+    padding: 2rem;
+}
+
 /* Responsive */
+@media (max-width: 968px) {
+    .carousel-slide {
+        min-width: calc(50% - 0.75rem);
+    }
+
+    .challenges-cards .card {
+        flex: 1 1 calc(50% - 1.5rem);
+    }
+}
+
+@media (max-width: 900px) {
+    .challenges-cards .card {
+        flex: 1 1 calc(50% - 1.5rem);
+    }
+}
+
 @media (max-width: 768px) {
     .nav-container {
         flex-direction: column;
@@ -505,6 +837,28 @@ a:hover {
         padding: 1rem;
     }
 
+    .header-actions {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+
+    .page-title {
+        font-size: 2rem;
+    }
+
+    .carousel-slide {
+        min-width: 100%;
+    }
+
+    .carousel-nav {
+        display: none;
+    }
+
+    .section-title {
+        font-size: 1.5rem;
+    }
+
     .grid-2, .grid-3, .grid-4 {
         grid-template-columns: 1fr;
     }
@@ -512,11 +866,31 @@ a:hover {
     .stats-grid {
         grid-template-columns: repeat(2, 1fr);
     }
+
+    .challenges-cards .card {
+        flex: 1 1 100%;
+    }
+}
+
+@media (max-width: 600px) {
+    .challenges-cards .card {
+        flex: 1 1 100%;
+    }
 }
 
 @media (max-width: 480px) {
     .stats-grid {
         grid-template-columns: 1fr;
+    }
+
+    .card {
+        padding: 1rem;
+    }
+
+    .card-header {
+        flex-direction: column;
+        gap: 0.5rem;
+        align-items: flex-start;
     }
 
     .card-footer {

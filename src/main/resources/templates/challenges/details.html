@@ -1,53 +1,87 @@
-<!-- templates/challenges/details.html -->
 <!DOCTYPE html>
-<html lang="fr" xmlns="http://www.w3.org/1999/xhtml"
+<html lang="fr"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout}">
 <head>
-    <title th:text="'Défi: ' + ${challenge.quest.title}">Détail du défi</title>
+    <title th:text="'Défi : ' + ${challenge.quest.title}">Détail du défi</title>
 </head>
 <body>
 <main layout:fragment="content">
-    <div class="container">
-        <h1 th:text="${challenge.quest.title}">Titre du défi</h1>
-        <p>
-            <strong>Lancé par :</strong>
-            <span th:text="${challenge.challenger.username}">Challenger</span>
-        </p>
-        <p>
-            <strong>Défié :</strong>
-            <span th:text="${challenge.target.username}">Opposant</span>
-        </p>
-        <p>
-            <strong>Description :</strong>
-            <span th:text="${challenge.quest.description}">Description</span>
-        </p>
-        <p>
-            <strong>Temps restant :</strong>
-            <span class="countdown-timer"
-                  th:attr="data-expiration=${#temporals.format(challenge.expirationDate, 'yyyy-MM-dd''T''HH:mm:ss')}">
-  Chargement…
-</span>
+    <div class="challenge-page">
+        <div class="challenge-card">
 
-        </p>
-        <p>
-            <strong>Statut :</strong>
-            <span th:text="${challenge.status}">EN_COURS</span>
-        </p>
+            <!-- En-tête -->
+            <div class="challenge-header">
+                <h1>
+                    <i class="fas fa-trophy"></i>
+                    <span th:text="${challenge.quest.title}">Titre du défi</span>
+                </h1>
+                <div class="challenge-status">
+                    <span th:if="${challenge.status=='IN_PROGRESS'}" class="badge warning">En cours</span>
+                    <span th:if="${challenge.status=='SUCCESS'}"     class="badge success">Réussi</span>
+                    <span th:if="${challenge.status=='FAILED'}"      class="badge error">Échoué</span>
+                </div>
+            </div>
 
-        <div th:if="${challenge.status=='IN_PROGRESS' and #authentication.name == challenge.target.username}">
-            <form th:action="@{/challenges/complete/{id}(id=${challenge.id})}" method="post">
-                <button type="submit" class="btn">Terminer le défi</button>
-            </form>
-        </div>
+            <!-- Corps -->
+            <div class="challenge-body">
 
-        <div class="mt-4">
-            <a th:href="@{/challenges}" class="btn btn-secondary">
-                ← Retour aux défis
-            </a>
+                <!-- barre de progression -->
+                <div class="progress">
+                    <div class="progress-inner"></div>
+                </div>
+
+                <div class="info-pair">
+                    <div>
+                        <label>Lancé par</label>
+                        <p th:text="${challenge.challenger.username}">Challenger</p>
+                    </div>
+                    <div>
+                        <label>Défié</label>
+                        <p th:text="${challenge.target.username}">Opposant</p>
+                    </div>
+                </div>
+
+                <div class="challenge-desc">
+                    <label>Description</label>
+                    <p th:text="${challenge.quest.description}">Description…</p>
+                </div>
+
+                <div class="challenge-timer">
+                    <label>Temps restant</label>
+                    <p>
+                        <i class="fas fa-clock"></i>
+                        <span class="countdown-timer"
+                              th:attr="data-start=${#temporals.format(challenge.startDate,'yyyy-MM-dd''T''HH:mm:ss')},
+                           data-expiration=${#temporals.format(challenge.expirationDate,'yyyy-MM-dd''T''HH:mm:ss')}">
+              Chargement…
+            </span>
+                    </p>
+                </div>
+
+            </div>
+
+            <!-- Pied de carte -->
+            <div class="challenge-footer">
+                <a th:href="@{/quests/{id}(id=${challenge.quest.id})}" class="btn btn-primary">
+                    <i class="fas fa-arrow-left"></i> Vers la quête
+                </a>
+                <a th:href="@{/challenges}" class="btn btn-secondary">
+                    <i class="fas fa-list"></i> Retour aux défis
+                </a>
+                <form th:if="${challenge.status=='IN_PROGRESS' and #authentication.name == challenge.target.username}"
+                      th:action="@{/challenges/complete/{id}(id=${challenge.id})}"
+                      method="post" class="inline-form">
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-check-circle"></i> Terminer
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
 </main>
+
+
 </body>
 </html>

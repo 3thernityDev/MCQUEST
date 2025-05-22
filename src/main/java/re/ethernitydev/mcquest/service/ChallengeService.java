@@ -1,6 +1,7 @@
 package re.ethernitydev.mcquest.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import re.ethernitydev.mcquest.model.Challenge;
 import re.ethernitydev.mcquest.model.ChallengeStatus;
@@ -20,9 +21,6 @@ public class ChallengeService {
 
     @Autowired
     private UserService userService;
-
-    @Autowired
-    private QuestService questService;
 
     /**
      * Crée un défi avec une date d'expiration précise.
@@ -82,6 +80,11 @@ public class ChallengeService {
         return challengeRepository.save(challenge);
     }
 
+    @Scheduled(fixedRate = 60_000)
+    public void expireChallengesJob() {
+        checkExpiredChallenges();
+    }
+
     public void checkExpiredChallenges() {
         List<Challenge> activeChallenges = challengeRepository.findByStatus(ChallengeStatus.IN_PROGRESS);
         LocalDateTime now = LocalDateTime.now();
@@ -92,4 +95,9 @@ public class ChallengeService {
             }
         }
     }
+
+    public List<Challenge> getChallengesByTargetAndStatus(User target, ChallengeStatus status) {
+        return challengeRepository.findByTargetAndStatus(target, status);
+    }
+
 }
