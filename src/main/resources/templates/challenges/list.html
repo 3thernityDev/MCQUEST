@@ -1,5 +1,3 @@
-<!-- templates/challenges/list.html -->
-
 <!DOCTYPE html>
 
 <html lang="fr"
@@ -15,389 +13,107 @@
 <body>
 <main layout:fragment="content">
     <div class="container">
-        <div class="header-actions mb-6">
+        <div class="header-actions">
             <h1 class="page-title">⚔️ Défis</h1>
             <a th:href="@{/challenges/create}" class="btn btn-primary">
                 <i class="fas fa-plus"></i> Créer un défi
             </a>
         </div>
 
-        <section>
-            <h2 class="section-title">🔥 En cours</h2>
+        <div class="filter-bar mb-6">
+            <label for="statusFilter" class="small-text">Filtrer par statut:</label>
+            <select id="statusFilter" class="input-status-filter">
+                <option value="ALL">Tous</option>
+                <option value="IN_PROGRESS">En cours</option>
+                <option value="SUCCESS">Réussis</option>
+                <option value="FAILED">Échoués</option>
+            </select>
+        </div>
 
+        <section data-status="IN_PROGRESS">
+            <h2 class="section-title">🔥 En cours</h2>
             <div th:if="${challenges == null or challenges.isEmpty()}" class="empty-state">
                 <i class="fas fa-hourglass-start"></i>
                 <p class="empty-msg">Aucun défi actif pour le moment.</p>
             </div>
-
-            <div th:if="${challenges != null and !challenges.isEmpty()}" class="carousel-container">
-                <div class="carousel">
-                    <div class="carousel-track" id="active-track">
-                        <div th:each="challenge : ${challenges}" class="carousel-slide">
-                            <div class="card challenge-card">
-                                <div class="card-header">
-                                    <h3 th:text="${challenge.quest.title}">Titre</h3>
-                                    <span class="badge"
-                                          th:classappend="${challenge.status.name()} == 'IN_PROGRESS' ? ' badge-warning' : (${challenge.status.name()} == 'SUCCESS' ? ' badge-success' : ' badge-danger')"
-                                          th:text="${challenge.status}">EN_COURS</span>
-                                </div>
-                                <div class="card-body">
-                                    <p class="small-text"><strong>Lancé par :</strong> <span
-                                            th:text="${challenge.challenger.username}">User</span></p>
-                                    <p class="small-text"><strong>Défié :</strong> <span
-                                            th:text="${challenge.target.username}">User</span></p>
-                                    <p th:text="${challenge.quest.description}" class="description">Description</p>
-                                    <div class="progress progress-sm">
-                                        <div class="progress-inner"
-                                             th:attr="data-start=${#temporals.format(challenge.startDate,'yyyy-MM-dd''T''HH:mm:ss')}, data-expiration=${#temporals.format(challenge.expirationDate,'yyyy-MM-dd''T''HH:mm:ss')}">
-                                        </div>
-                                    </div>
-                                    <p class="timer small-text mt-2">
-                                        <i class="fas fa-clock"></i>
-                                        <span class="countdown-timer">Chargement…</span>
-                                    </p>
-                                </div>
-                                <div class="card-footer">
-                                    <a th:href="@{/challenges/{id}(id=${challenge.id})}"
-                                       class="btn btn-secondary btn-small">Voir</a>
-                                </div>
+            <div class="grid grid-3" th:if="${challenges != null and !challenges.isEmpty()}">
+                <div th:each="challenge : ${challenges}" class="card challenge-card">
+                    <div class="card-header">
+                        <h3 th:text="${challenge.quest.title}">Titre</h3>
+                        <span class="badge badge-warning" th:text="${challenge.status}">EN_COURS</span>
+                    </div>
+                    <div class="card-content">
+                        <p class="small-text"><strong>Lancé par :</strong> <span
+                                th:text="${challenge.challenger.username}">User</span></p>
+                        <p class="small-text"><strong>Défié :</strong> <span
+                                th:text="${challenge.target.username}">User</span></p>
+                        <p class="description" th:text="${challenge.quest.description}">Description</p>
+                        <!-- Progression & compteur -->
+                        <div class="progress progress-sm">
+                            <div class="progress-inner"
+                                 th:attr="data-start=${#temporals.format(challenge.startDate,'yyyy-MM-dd''T''HH:mm:ss')}, data-expiration=${#temporals.format(challenge.expirationDate,'yyyy-MM-dd''T''HH:mm:ss')}">
                             </div>
                         </div>
+                        <p class="timer small-text">
+                            <i class="fas fa-clock"></i>
+                            <span class="countdown-timer">Chargement…</span>
+                        </p>
+                    </div>
+                    <div class="card-footer">
+                        <a th:href="@{/challenges/{id}(id=${challenge.id})}"
+                           class="btn btn-secondary btn-small">Voir</a>
                     </div>
                 </div>
-                <button class="carousel-nav prev" data-target="active-track"><i class="fas fa-chevron-left"></i>
-                </button>
-                <button class="carousel-nav next" data-target="active-track"><i class="fas fa-chevron-right"></i>
-                </button>
-                <div class="carousel-dots" data-target="active-track"></div>
             </div>
         </section>
 
-        <section class="history-section">
-            <h2 class="section-title">📜 Historique des défis</h2>
-
-            <div th:if="${successfulChallenges != null and !successfulChallenges.isEmpty()}" class="carousel-container">
-                <h3 style="color:#4CAF50;"><i class="fas fa-check-circle"></i> Réussis</h3>
-                <div class="carousel">
-                    <div class="carousel-track" id="success-track">
-                        <div th:each="c : ${successfulChallenges}" class="carousel-slide">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h3 th:text="${c.quest.title}">Titre</h3>
-                                    <span class="badge badge-success" th:text="${c.status}">SUCCESS</span>
-                                </div>
-                                <div class="card-body">
-                                    <p class="small-text"><strong>Lancé par :</strong> <span
-                                            th:text="${c.challenger.username}">User</span></p>
-                                    <p class="small-text"><strong>Défié :</strong> <span th:text="${c.target.username}">User</span>
-                                    </p>
-                                    <p th:text="${c.quest.description}" class="description">Description</p>
-                                </div>
-                                <div class="card-footer">
-                                    <a th:href="@{/challenges/{id}(id=${c.id})}" class="btn btn-secondary btn-small">Voir</a>
-                                </div>
-                            </div>
-                        </div>
+        <section class="mt-8" data-status="SUCCESS"
+                 th:if="${successfulChallenges != null and !successfulChallenges.isEmpty()}">
+            <h2 class="section-title" style="color:#4CAF50;"><i class="fas fa-check-circle"></i> Réussis</h2>
+            <div class="grid grid-3">
+                <div th:each="c : ${successfulChallenges}" class="card challenge-card">
+                    <div class="card-header">
+                        <h3 th:text="${c.quest.title}">Titre</h3>
+                        <span class="badge badge-success" th:text="${c.status}">SUCCESS</span>
+                    </div>
+                    <div class="card-content">
+                        <p class="description" th:text="${c.quest.description}">Description</p>
+                    </div>
+                    <div class="card-footer">
+                        <a th:href="@{/challenges/{id}(id=${c.id})}" class="btn btn-secondary btn-small">Voir</a>
                     </div>
                 </div>
-                <button class="carousel-nav prev" data-target="success-track"><i class="fas fa-chevron-left"></i>
-                </button>
-                <button class="carousel-nav next" data-target="success-track"><i class="fas fa-chevron-right"></i>
-                </button>
-                <div class="carousel-dots" data-target="success-track"></div>
-            </div>
-
-            <div th:if="${failedChallenges != null and !failedChallenges.isEmpty()}" class="carousel-container">
-                <h3 style="color:#f44336;"><i class="fas fa-times-circle"></i> Échoués</h3>
-                <div class="carousel">
-                    <div class="carousel-track" id="failed-track">
-                        <div th:each="c : ${failedChallenges}" class="carousel-slide">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h3 th:text="${c.quest.title}">Titre</h3>
-                                    <span class="badge badge-danger" th:text="${c.status}">FAILED</span>
-                                </div>
-                                <div class="card-body">
-                                    <p class="small-text"><strong>Lancé par :</strong> <span
-                                            th:text="${c.challenger.username}">User</span></p>
-                                    <p class="small-text"><strong>Défié :</strong> <span th:text="${c.target.username}">User</span>
-                                    </p>
-                                    <p th:text="${c.quest.description}" class="description">Description</p>
-                                </div>
-                                <div class="card-footer">
-                                    <a th:href="@{/challenges/{id}(id=${c.id})}" class="btn btn-secondary btn-small">Voir</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <button class="carousel-nav prev" data-target="failed-track"><i class="fas fa-chevron-left"></i>
-                </button>
-                <button class="carousel-nav next" data-target="failed-track"><i class="fas fa-chevron-right"></i>
-                </button>
-                <div class="carousel-dots" data-target="failed-track"></div>
-            </div>
-
-            <div th:if="${(successfulChallenges == null or successfulChallenges.isEmpty()) and (failedChallenges == null or failedChallenges.isEmpty())}"
-                 class="empty-state">
-                <i class="fas fa-archive"></i>
-                <p>Pas encore d'historique de défis.</p>
             </div>
         </section>
+
+        <section class="mt-8" data-status="FAILED" th:if="${failedChallenges != null and !failedChallenges.isEmpty()}">
+            <h2 class="section-title" style="color:#f44336;"><i class="fas fa-times-circle"></i> Échoués</h2>
+            <div class="grid grid-3">
+                <div th:each="c : ${failedChallenges}" class="card challenge-card">
+                    <div class="card-header">
+                        <h3 th:text="${c.quest.title}">Titre</h3>
+                        <span class="badge badge-danger" th:text="${c.status}">FAILED</span>
+                    </div>
+                    <div class="card-content">
+                        <p class="description" th:text="${c.quest.description}">Description</p>
+                    </div>
+                    <div class="card-footer">
+                        <a th:href="@{/challenges/{id}(id=${c.id})}" class="btn btn-secondary btn-small">Voir</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div th:if="${(successfulChallenges == null or successfulChallenges.isEmpty()) and (failedChallenges == null or failedChallenges.isEmpty())}"
+             class="empty-state mt-8">
+            <i class="fas fa-archive"></i>
+            <p>Pas encore d'historique de défis.</p>
+        </div>
+
     </div>
 
 </main>
 
-
-<script th:inline="javascript">
-    document.addEventListener('DOMContentLoaded', () => {
-        // Progression & timer
-        document.querySelectorAll('.progress-inner').forEach(bar => {
-            const timerEl = bar.closest('.card-body').querySelector('.countdown-timer');
-            if (!timerEl) return;
-
-            const start = new Date(bar.dataset.start);
-            const expiry = new Date(bar.dataset.expiration);
-
-            function updateAll() {
-                const now = new Date();
-                const total = expiry - start;
-                const elapsed = now - start;
-                const pct = Math.max(0, Math.min(1, elapsed / total));
-                bar.style.width = pct * 100 + '%';
-
-                let diff = expiry - now;
-                if (diff < 0) diff = 0;
-
-                const h = String(Math.floor(diff / 3600000)).padStart(2, '0');
-                const m = String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0');
-                const s = String(Math.floor((diff % 60000) / 1000)).padStart(2, '0');
-                timerEl.textContent = `${h}h ${m}m ${s}s`;
-            }
-
-            updateAll();
-            setInterval(updateAll, 1000);
-        });
-
-        // Carousel class
-        class Carousel {
-            constructor(container) {
-                this.container = container;
-                this.carousel = container.querySelector('.carousel');
-                this.track = container.querySelector('.carousel-track');
-                this.slides = Array.from(this.track.children);
-                this.prevBtn = container.querySelector('.carousel-nav.prev');
-                this.nextBtn = container.querySelector('.carousel-nav.next');
-                this.dotsContainer = container.querySelector('.carousel-dots');
-
-                this.currentIndex = 0;
-                this.slidesToShow = this.getSlidesToShow();
-                this.maxIndex = Math.max(0, this.slides.length - this.slidesToShow);
-
-                // Vérifier s'il y a assez de slides pour justifier un carrousel
-                if (this.slides.length <= this.slidesToShow) {
-                    this.hideNavigation();
-                    return;
-                }
-
-                this.init();
-            }
-
-            getSlidesToShow() {
-                const width = window.innerWidth;
-                if (width <= 768) return 1;
-                if (width <= 968) return 2;
-                return 3;
-            }
-
-            hideNavigation() {
-                if (this.prevBtn) this.prevBtn.style.display = 'none';
-                if (this.nextBtn) this.nextBtn.style.display = 'none';
-                if (this.dotsContainer) this.dotsContainer.style.display = 'none';
-            }
-
-            showNavigation() {
-                if (this.prevBtn) this.prevBtn.style.display = 'flex';
-                if (this.nextBtn) this.nextBtn.style.display = 'flex';
-                if (this.dotsContainer) this.dotsContainer.style.display = 'flex';
-            }
-
-            init() {
-                // S'assurer que les éléments existent
-                if (!this.track || !this.slides.length) return;
-
-                this.createDots();
-                this.setupEventListeners();
-                this.updateCarousel();
-
-                // Responsive handling
-                let resizeTimeout;
-                window.addEventListener('resize', () => {
-                    clearTimeout(resizeTimeout);
-                    resizeTimeout = setTimeout(() => {
-                        this.handleResize();
-                    }, 250);
-                });
-            }
-
-            createDots() {
-                if (!this.dotsContainer) return;
-
-                this.dotsContainer.innerHTML = '';
-
-                // Créer un point pour chaque position possible
-                for (let i = 0; i <= this.maxIndex; i++) {
-                    const dot = document.createElement('button');
-                    dot.className = 'carousel-dot';
-                    dot.setAttribute('aria-label', `Aller à la diapositive ${i + 1}`);
-                    dot.addEventListener('click', () => this.goToSlide(i));
-                    this.dotsContainer.appendChild(dot);
-                }
-            }
-
-            setupEventListeners() {
-                if (this.prevBtn) {
-                    this.prevBtn.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        this.goToPrevious();
-                    });
-                }
-
-                if (this.nextBtn) {
-                    this.nextBtn.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        this.goToNext();
-                    });
-                }
-
-                // Support du clavier
-                this.container.addEventListener('keydown', (e) => {
-                    if (e.key === 'ArrowLeft') {
-                        this.goToPrevious();
-                    } else if (e.key === 'ArrowRight') {
-                        this.goToNext();
-                    }
-                });
-            }
-
-            goToPrevious() {
-                if (this.currentIndex > 0) {
-                    this.goToSlide(this.currentIndex - 1);
-                }
-            }
-
-            goToNext() {
-                if (this.currentIndex < this.maxIndex) {
-                    this.goToSlide(this.currentIndex + 1);
-                }
-            }
-
-            goToSlide(index) {
-                this.currentIndex = Math.max(0, Math.min(index, this.maxIndex));
-                this.updateCarousel();
-            }
-
-            updateCarousel() {
-                if (!this.track) return;
-
-                // Calculer le décalage
-                const slideWidth = 100 / this.slidesToShow;
-                const translateX = -(slideWidth * this.currentIndex);
-
-                // Appliquer la transformation
-                this.track.style.transform = `translateX(${translateX}%)`;
-
-                // Mettre à jour les dots
-                this.updateDots();
-
-                // Mettre à jour les boutons de navigation
-                this.updateNavigationButtons();
-            }
-
-            updateDots() {
-                if (!this.dotsContainer) return;
-
-                const dots = this.dotsContainer.querySelectorAll('.carousel-dot');
-                dots.forEach((dot, index) => {
-                    dot.classList.toggle('active', index === this.currentIndex);
-                });
-            }
-
-            updateNavigationButtons() {
-                if (this.prevBtn) {
-                    this.prevBtn.disabled = this.currentIndex === 0;
-                    this.prevBtn.setAttribute('aria-disabled', this.currentIndex === 0);
-                }
-
-                if (this.nextBtn) {
-                    this.nextBtn.disabled = this.currentIndex === this.maxIndex;
-                    this.nextBtn.setAttribute('aria-disabled', this.currentIndex === this.maxIndex);
-                }
-            }
-
-            handleResize() {
-                const newSlidesToShow = this.getSlidesToShow();
-
-                if (newSlidesToShow !== this.slidesToShow) {
-                    this.slidesToShow = newSlidesToShow;
-                    this.maxIndex = Math.max(0, this.slides.length - this.slidesToShow);
-
-                    // Vérifier si on doit cacher/montrer la navigation
-                    if (this.slides.length <= this.slidesToShow) {
-                        this.hideNavigation();
-                        this.currentIndex = 0;
-                        this.updateCarousel();
-                        return;
-                    } else {
-                        this.showNavigation();
-                    }
-
-                    // Ajuster l'index actuel si nécessaire
-                    if (this.currentIndex > this.maxIndex) {
-                        this.currentIndex = this.maxIndex;
-                    }
-
-                    // Recréer les dots et mettre à jour
-                    this.createDots();
-                    this.updateCarousel();
-                }
-            }
-
-            // Méthode pour détruire le carrousel (utile pour le nettoyage)
-            destroy() {
-                if (this.prevBtn) {
-                    this.prevBtn.removeEventListener('click', this.goToPrevious);
-                }
-                if (this.nextBtn) {
-                    this.nextBtn.removeEventListener('click', this.goToNext);
-                }
-                if (this.dotsContainer) {
-                    this.dotsContainer.innerHTML = '';
-                }
-            }
-        }
-
-        // Initialiser tous les carrousels
-        const carousels = [];
-        document.querySelectorAll('.carousel-container').forEach(container => {
-            // Vérifier que le container a bien des slides
-            const slides = container.querySelectorAll('.carousel-slide');
-            if (slides.length > 0) {
-                const carousel = new Carousel(container);
-                carousels.push(carousel);
-            }
-        });
-
-        // Nettoyage global si nécessaire
-        window.addEventListener('beforeunload', () => {
-            carousels.forEach(carousel => {
-                if (carousel.destroy) {
-                    carousel.destroy();
-                }
-            });
-        });
-    });
-</script>
 
 </body>
 </html>

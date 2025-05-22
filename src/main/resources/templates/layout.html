@@ -78,5 +78,41 @@
         setInterval(update, 1000);
     });
 </script>
+<script th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', () => {
+        const filter = document.getElementById('statusFilter');
+        filter.addEventListener('change', () => {
+            const value = filter.value;
+            document.querySelectorAll('section[data-status]').forEach(sec => {
+                sec.style.display = (value === 'ALL' || sec.getAttribute('data-status') === value) ? 'block' : 'none';
+            });
+        });
+    });
+</script>
+<script th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.progress-inner').forEach(bar => {
+            const timerEl = bar.parentElement.nextElementSibling.querySelector('.countdown-timer');
+            const start = new Date(bar.dataset.start);
+            const expiry = new Date(bar.dataset.expiration);
 
+            function update() {
+                const now = new Date();
+                const total = expiry - start;
+                const elapsed = now - start;
+                const pct = Math.max(0, Math.min(1, elapsed / total));
+                bar.style.width = pct * 100 + '%';
+                let diff = expiry - now;
+                if (diff < 0) diff = 0;
+                const h = String(Math.floor(diff / 3600000)).padStart(2, '0');
+                const m = String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0');
+                const s = String(Math.floor((diff % 60000) / 1000)).padStart(2, '0');
+                timerEl.textContent = `${h}h ${m}m ${s}s`;
+            }
+
+            update();
+            setInterval(update, 1000);
+        });
+    });
+</script>
 </html>
