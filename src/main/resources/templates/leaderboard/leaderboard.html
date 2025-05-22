@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+
+<html lang="fr" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>🏆 Classement</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<main layout:fragment="content">
+    <div class="container">
+        <div class="header-actions mb-6">
+            <h1 class="page-title">🏆 Classement des joueurs</h1>
+            <div class="filter-bar">
+                <label for="searchPlayer" class="small-text">Rechercher :</label>
+                <input id="searchPlayer" type="text" class="input-search" placeholder="Nom du joueur…"/>
+            </div>
+        </div>
+
+
+        <div th:if="${#lists.isEmpty(topPlayers)}" class="empty-state">
+            <i class="fas fa-user-friends"></i>
+            <p>Aucun joueur à afficher.</p>
+        </div>
+
+        <table th:if="${!#lists.isEmpty(topPlayers)}" class="table">
+            <thead>
+            <tr>
+                <th>Rang</th>
+                <th>Joueur</th>
+                <th>XP</th>
+                <th>Niveau</th>
+            </tr>
+            </thead>
+            <tbody id="leaderboardBody">
+            <tr th:each="user, iterStat : ${topPlayers}">
+                <td th:text="${iterStat.count}">1</td>
+                <td th:text="${user.username}">Nom</td>
+                <td th:text="${user.xp}">0</td>
+                <td th:text="${user.level}">1</td>
+            </tr>
+            </tbody>
+        </table>
+
+
+    </div>
+</main>
+</body>
+</html>

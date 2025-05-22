@@ -16,7 +16,7 @@ public class LeaderboardController {
 
     @GetMapping
     public String getLeaderboard(Model model) {
-        model.addAttribute("topUsers", userService.getTopUsers(20));
+        model.addAttribute("topPlayers", userService.getTopUsers(20));
         return "leaderboard/leaderboard";
     }
 }

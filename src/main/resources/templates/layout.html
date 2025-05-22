@@ -115,4 +115,17 @@
         });
     });
 </script>
+<script th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', () => {
+        const input = document.getElementById('searchPlayer');
+        const rows = document.querySelectorAll('#leaderboardBody tr');
+        input.addEventListener('input', () => {
+            const filter = input.value.toLowerCase();
+            rows.forEach(row => {
+                const name = row.children[1].textContent.toLowerCase();
+                row.style.display = name.includes(filter) ? '' : 'none';
+            });
+        });
+    });
+</script>
 </html>
