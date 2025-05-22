@@ -323,6 +323,29 @@ body {
     color: white;
 }
 
+.badge-pill {
+    padding: 0.25rem 0.75rem;
+    border-radius: 50px;
+}
+
+.badge-success {
+    background: #4CAF50;
+    color: white;
+}
+
+.badge-warning {
+    background: #ff9800;
+    color: white;
+}
+
+.badge-danger {
+    background: #f44336;
+    color: white;
+}
+
+
+
+
 /* Statuts des défis */
 .status-in-progress {
     color: #ff9800;

@@ -128,4 +128,59 @@
         });
     });
 </script>
+<script th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.carousel-container').forEach(container => {
+            const track = container.querySelector('.carousel-track');
+            const slides = Array.from(track.children);
+            const prevBtn = container.querySelector('.carousel-nav.prev');
+            const nextBtn = container.querySelector('.carousel-nav.next');
+
+            let index = 0;
+            // Calcule combien de slides sont visibles en fonction de la largeur
+            const computePerView = () => {
+                const w = window.innerWidth;
+                return w < 768 ? 1 : (w < 992 ? 2 : 3);
+            };
+            let perView = computePerView();
+
+            const update = () => {
+                // Translation en pourcentage
+                const shift = index * (100 / perView);
+                track.style.transform = `translateX(-${shift}%)`;
+                // Activation/désactivation des boutons
+                prevBtn.disabled = index === 0;
+                nextBtn.disabled = index >= slides.length - perView;
+            };
+
+            // Gestion du redimensionnement
+            window.addEventListener('resize', () => {
+                perView = computePerView();
+                // S’assurer que l’index reste valide
+                if (index > slides.length - perView) {
+                    index = Math.max(0, slides.length - perView);
+                }
+                update();
+            });
+
+            // Événements des boutons
+            prevBtn.addEventListener('click', () => {
+                if (index > 0) {
+                    index--;
+                    update();
+                }
+            });
+            nextBtn.addEventListener('click', () => {
+                if (index < slides.length - perView) {
+                    index++;
+                    update();
+                }
+            });
+
+            // Initialisation
+            update();
+        });
+    });
+</script>
+
 </html>

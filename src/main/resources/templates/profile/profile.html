@@ -1,0 +1,136 @@
+<!-- templates/profile/profile.html -->
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Mon Profil</title>
+</head>
+<body>
+<main layout:fragment="content">
+    <div class="container">
+        <!-- Header + bouton édition -->
+        <div class="header-actions justify-between mb-6">
+            <h1 class="page-title">👤 Mon Profil</h1>
+            <a th:href="@{/profile/edit}" class="btn btn-primary">
+                <i class="fas fa-edit"></i> Modifier mon profil
+            </a>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="stats-grid mb-8">
+            <div class="stat-card">
+                <div class="stat-value" th:text="${user.username}">Pseudo</div>
+                <div class="stat-label">Pseudo</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" th:text="${user.level}">1</div>
+                <div class="stat-label">Niveau</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" th:text="${user.xp}">0</div>
+                <div class="stat-label">XP</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" th:text="${questCount}">0</div>
+                <div class="stat-label">Quêtes</div>
+            </div>
+        </div>
+
+        <!-- Quêtes complétées -->
+        <section class="mb-10">
+            <h2 class="section-title">🗺️ Quêtes complétées</h2>
+            <div th:if="${completedQuests.empty}" class="empty-state">
+                <i class="fas fa-scroll"></i>
+                <p>Aucune quête complétée pour le moment.</p>
+            </div>
+            <div th:if="${!completedQuests.empty}" class="carousel-container">
+                <div class="carousel">
+                    <div class="carousel-track">
+                        <div th:each="qc : ${completedQuests}" class="carousel-slide">
+                            <div class="card">
+                                <div class="card-header flex justify-between items-center">
+                                    <h3 th:text="${qc.quest.title}">Titre de la quête</h3>
+                                    <span class="badge badge-pill badge-success">Terminé</span>
+                                </div>
+                                <div class="card-content">
+                                    <p th:text="${qc.quest.description}">Description de la quête</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="carousel-nav prev"><i class="fas fa-chevron-left"></i></button>
+                <button class="carousel-nav next"><i class="fas fa-chevron-right"></i></button>
+            </div>
+        </section>
+
+        <!-- Défis reçus -->
+        <section class="mb-10">
+            <h2 class="section-title">📬 Défis reçus</h2>
+            <div th:if="${receivedChallenges.empty}" class="empty-state">
+                <i class="fas fa-inbox"></i>
+                <p>Aucun défi reçu pour le moment.</p>
+            </div>
+            <div th:if="${!receivedChallenges.empty}" class="carousel-container">
+                <div class="carousel">
+                    <div class="carousel-track">
+                        <div th:each="c : ${receivedChallenges}" class="carousel-slide">
+                            <div class="card">
+                                <div class="card-header flex justify-between items-center">
+                                    <h3 th:text="${c.quest.title}">Quête</h3>
+                                    <span th:class="'badge badge-pill ' +
+                                        (c.status=='SUCCESS' ? 'badge-success' :
+                                         (c.status=='FAILED'  ? 'badge-danger'  : 'badge-warning'))"
+                                          th:text="${c.status}">Statut</span>
+                                </div>
+                                <div class="card-content">
+                                    <p><strong>De :</strong> <span th:text="${c.challenger.username}">Pseudo</span></p>
+                                    <p th:text="${c.quest.description}">Description du défi</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="carousel-nav prev"><i class="fas fa-chevron-left"></i></button>
+                <button class="carousel-nav next"><i class="fas fa-chevron-right"></i></button>
+            </div>
+        </section>
+
+        <!-- Défis envoyés -->
+        <section>
+            <h2 class="section-title">📤 Défis envoyés</h2>
+            <div th:if="${sentChallenges.empty}" class="empty-state">
+                <i class="fas fa-paper-plane"></i>
+                <p>Aucun défi envoyé pour le moment.</p>
+            </div>
+            <div th:if="${!sentChallenges.empty}" class="carousel-container">
+                <div class="carousel">
+                    <div class="carousel-track">
+                        <div th:each="c : ${sentChallenges}" class="carousel-slide">
+                            <div class="card">
+                                <div class="card-header flex justify-between items-center">
+                                    <h3 th:text="${c.quest.title}">Quête</h3>
+                                    <span th:class="'badge badge-pill ' +
+                                        (c.status=='SUCCESS' ? 'badge-success' :
+                                         (c.status=='FAILED'  ? 'badge-danger'  : 'badge-warning'))"
+                                          th:text="${c.status}">Statut</span>
+                                </div>
+                                <div class="card-content">
+                                    <p><strong>À :</strong> <span th:text="${c.target.username}">Pseudo</span></p>
+                                    <p th:text="${c.quest.description}">Description du défi</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="carousel-nav prev"><i class="fas fa-chevron-left"></i></button>
+                <button class="carousel-nav next"><i class="fas fa-chevron-right"></i></button>
+            </div>
+        </section>
+
+    </div>
+</main>
+</body>
+</html>
