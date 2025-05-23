@@ -1,7 +1,7 @@
 <!-- templates/layout.html -->
 <!DOCTYPE html>
 <html lang="fr" xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -24,14 +24,22 @@
             <a th:href="@{/quests}" class="nav-link"><i class="fas fa-scroll"></i> Quêtes</a>
             <a th:href="@{/challenges}" class="nav-link"><i class="fas fa-trophy"></i> Défis</a>
             <a th:href="@{/leaderboard}" class="nav-link"><i class="fas fa-ranking-star"></i> Classement</a>
-            <a th:href="@{/profile}" class="nav-link"><i class="fas fa-user"></i> Profil</a>
-            <form th:action="@{/logout}" method="post" class="logout-form">
-                <button type="submit" class="nav-link logout-btn"><i class="fas fa-sign-out-alt"></i> Déconnexion
-                </button>
-            </form>
+
+            <div sec:authorize="isAnonymous()">
+                <a th:href="@{/login}" class="nav-link"><i class="fas fa-sign-in-alt"></i> Connexion</a>
+                <a th:href="@{/register}" class="nav-link"><i class="fas fa-user-plus"></i> Inscription</a>
+            </div>
+
+            <div sec:authorize="isAuthenticated()">
+                <a th:href="@{/profile}" class="nav-link"><i class="fas fa-user"></i> Profil</a>
+                <form th:action="@{/logout}" method="post" class="logout-form">
+                    <button type="submit" class="nav-link logout-btn"><i class="fas fa-sign-out-alt"></i> Déconnexion</button>
+                </form>
+            </div>
         </div>
     </div>
 </nav>
+
 
 <!-- Page Content -->
 <main class="main-content" layout:fragment="content"></main>
@@ -137,7 +145,6 @@
             const nextBtn = container.querySelector('.carousel-nav.next');
 
             let index = 0;
-            // Calcule combien de slides sont visibles en fonction de la largeur
             const computePerView = () => {
                 const w = window.innerWidth;
                 return w < 768 ? 1 : (w < 992 ? 2 : 3);
@@ -184,17 +191,11 @@
 </script>
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        console.log("🔍 Quest script chargé");
         const grid        = document.getElementById('questGrid');
         const searchInput = document.getElementById('questSearch');
         const sortSelect  = document.getElementById('questSort');
         const toggleBtn   = document.getElementById('toggleCompleted');
-        console.log({ grid, searchInput, sortSelect, toggleBtn });
 
-        if (!grid || !searchInput || !sortSelect || !toggleBtn) {
-            console.error("❌ Un ou plusieurs éléments introuvables, vérifie les IDs");
-            return;
-        }
 
         const cards       = Array.from(grid.children);
         let showCompleted = true;
@@ -231,7 +232,6 @@
         });
 
         filterAndSort();
-        console.log("✅ Script quests actif");
     });
 </script>
 
