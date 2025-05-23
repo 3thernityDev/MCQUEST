@@ -6,9 +6,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import re.ethernitydev.mcquest.model.Quest;
+import re.ethernitydev.mcquest.model.QuestCompletion;
 import re.ethernitydev.mcquest.model.User;
 import re.ethernitydev.mcquest.service.QuestService;
 import re.ethernitydev.mcquest.service.UserService;
+
+import java.util.List;
 
 @Controller
 @RequestMapping("/quests")
@@ -22,11 +25,25 @@ public class QuestController {
 
     @GetMapping
     public String getAllQuests(Model model, Authentication authentication) {
-        User currentUser = userService.getUserByUsername(authentication.getName()).orElse(null);
+        User currentUser = userService
+                .getUserByUsername(authentication.getName())
+                .orElse(null);
+
+        // Toujours la liste complète
         model.addAttribute("quests", questService.getAllQuests());
+
+        // On récupère correctement les quêtes complétées
+        if (currentUser != null) {
+            List<QuestCompletion> done = questService.getUserCompletions(currentUser);
+            model.addAttribute("completedQuests", done);
+        } else {
+            model.addAttribute("completedQuests", List.<Quest>of());
+        }
+
         model.addAttribute("currentUser", currentUser);
         return "quests/list";
     }
+
 
     @GetMapping("/available")
     public String getAvailableQuests(Model model, Authentication authentication) {

@@ -11,6 +11,7 @@ import re.ethernitydev.mcquest.service.QuestService;
 import re.ethernitydev.mcquest.service.UserService;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -27,27 +28,21 @@ public class HomeController {
 
     @GetMapping({"/", "/home"})
     public String showHome(Model model, Authentication authentication) {
-        // Récupération de l'utilisateur connecté
-        User currentUser = userService
-                .getUserByUsername(authentication.getName())
-                .orElse(null);
-
+        User currentUser = userService.getUserByUsername(authentication.getName()).orElse(null);
         if (currentUser != null) {
-            int xp = currentUser.getXp();
-            int level = currentUser.getLevel();
-            long completedQuests = questService.getUserCompletions(currentUser).size();
-            long activeChallenges = challengeService.getActiveChallengesByTarget(currentUser).size();
-
-            // Assemblage dans un DTO (Map)
+            // tes stats
             Map<String, Object> userStats = new HashMap<>();
-            userStats.put("xp", xp);
-            userStats.put("level", level);
-            userStats.put("completedQuests", completedQuests);
-            userStats.put("activeChallenges", activeChallenges);
-
+            userStats.put("xp", currentUser.getXp());
+            userStats.put("level", currentUser.getLevel());
+            userStats.put("completedQuests", questService.getUserCompletions(currentUser).size());
+            userStats.put("activeChallenges", challengeService.getActiveChallengesByTarget(currentUser).size());
             model.addAttribute("userStats", userStats);
+
             model.addAttribute("recentQuests", questService.getRecentQuests());
-            model.addAttribute("activeChallengesList", challengeService.getActiveChallengesByTarget(currentUser));
+
+            model.addAttribute("activeChallenges", challengeService.getActiveChallengesByTarget(currentUser));
+
+            model.addAttribute("topUsers", userService.getTopUsers(5));
         }
         return "home";
     }

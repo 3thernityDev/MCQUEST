@@ -2,14 +2,13 @@
 <!DOCTYPE html>
 <html lang="fr" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout}" xmlns:sec="http://www.w3.org/1999/xhtml">
+      layout:decorate="~{layout}" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
-    <title>Accueil</title>
+    <title>Accueil - MinecraftQuest</title>
 </head>
 <body>
 <main layout:fragment="content">
 
-    <!-- Messages d'alerte -->
     <div th:if="${success}" class="alert alert-success">
         <i class="fas fa-check-circle"></i>
         <span th:text="${success}"></span>
@@ -19,13 +18,20 @@
         <span th:text="${error}"></span>
     </div>
 
-    <!-- Header de bienvenue -->
-    <div class="container">
-        <h1>🏠 Bienvenue sur MinecraftQuest</h1>
-        <p>Salut <strong sec:authentication="name">Joueur</strong> !</p>
+    <div class="container welcome">
+        <h1>🏠 Bienvenue sur MinecraftQuest, <strong sec:authentication="name">Joueur</strong>!</h1>
+        <p th:text="${#dates.format(#dates.createNow(), 'HH')} >= 6 and ${#dates.format(#dates.createNow(), 'HH')} < 12 ? 'Bonjour' : (${#dates.format(#dates.createNow(), 'HH')} < 18 ? 'Bon après‑midi' : 'Bonsoir') + ' ' + ${#authentication.name} + ' ! Prêt pour de nouvelles aventures ?'"></p>
     </div>
 
-    <!-- Statistiques du joueur -->
+    <div class="container level-progress">
+        <p>Progression vers le niveau suivant :</p>
+        <div class="progress-bar">
+            <div class="progress-fill" th:style="'width:' + (${userStats.xp} % 1000) / 10 + '%'">
+                <span th:text="(${userStats.xp} % 1000) + ' / 1000 XP'"></span>
+            </div>
+        </div>
+    </div>
+
     <div class="stats-grid">
         <div class="stat-card">
             <div class="stat-value" th:text="${userStats?.level ?: 1}">1</div>
@@ -45,7 +51,6 @@
         </div>
     </div>
 
-    <!-- Actions rapides -->
     <div class="container">
         <h2>🚀 Actions rapides</h2>
         <div class="grid grid-3">
@@ -63,17 +68,17 @@
                 </div>
             </div>
 
-            <div class="card">
+            <div class="card daily-quest" th:if="${dailyQuest!=null}">
                 <div class="card-header">
                     <h3 class="card-title">
-                        <i class="fas fa-plus"></i> Créer une quête
+                        <i class="fas fa-sun"></i> Quête du jour
                     </h3>
                 </div>
                 <div class="card-content">
-                    <p>Laisse libre cours à ta créativité et crée une quête unique.</p>
+                    <p th:text="${dailyQuest.title}"></p>
                 </div>
                 <div class="card-footer">
-                    <a th:href="@{/quests/create}" class="btn">Créer maintenant</a>
+                    <a th:href="@{/quests/{id}(id=${dailyQuest.id})}" class="btn btn-small">Voir détails</a>
                 </div>
             </div>
 
@@ -93,7 +98,6 @@
         </div>
     </div>
 
-    <!-- Quêtes récentes -->
     <div class="container" th:if="${recentQuests != null and !recentQuests.isEmpty()}">
         <h2>📋 Quêtes récentes</h2>
         <div class="grid grid-2">
@@ -120,7 +124,6 @@
         </div>
     </div>
 
-    <!-- Défis actifs -->
     <div class="container" th:if="${activeChallenges != null and !activeChallenges.isEmpty()}">
         <h2>⚔️ Tes défis actifs</h2>
         <div class="grid grid-2">
@@ -136,7 +139,8 @@
                     <p>
                         <small class="status-in-progress">
                             <i class="fas fa-clock"></i>
-                            Expire le <span th:text="${#temporals.format(challenge.expirationDate, 'dd/MM/yyyy HH:mm')}">Date</span>
+                            Expire le <span
+                                th:text="${#temporals.format(challenge.expirationDate, 'dd/MM/yyyy HH:mm')}">Date</span>
                         </small>
                     </p>
                 </div>
@@ -150,15 +154,34 @@
         </div>
     </div>
 
-    <!-- Message si pas de contenu -->
-    <div class="container" th:if="${(recentQuests == null or recentQuests.isEmpty()) and (activeChallenges == null or activeChallenges.isEmpty())}">
-        <div class="card" style="text-align: center; padding: 3rem;">
-            <h3>🌟 Prêt pour l'aventure ?</h3>
-            <p style="margin: 1rem 0;">Tu n'as pas encore de quêtes ou de défis actifs.</p>
-            <p>Commence ton voyage en explorant les quêtes disponibles ou en créant la tienne !</p>
-            <div style="margin-top: 2rem;">
-                <a th:href="@{/quests}" class="btn btn-large">Explorer les quêtes</a>
+    <section class="mb-10">
+        <h2 class="section-title">🏆 Top 5 Aventuriers</h2>
+        <div class="podium-container">
+            <div th:each="userStat, iterStat : ${topUsers}"
+                 class="podium-item"
+                 th:classappend="
+           ${iterStat.index == 0} ? ' podium-first' :
+           (${iterStat.index == 1} ? ' podium-second' :
+            (${iterStat.index == 2} ? ' podium-third' : ' podium-other'))">
+                <div class="position" th:text="${iterStat.index + 1}">1</div>
+                <div class="name"     th:text="${userStat.username}">Pseudo</div>
+                <div class="xp">
+                    <span th:text="${userStat.level}">12345</span> Niveaux
+                </div>
             </div>
+        </div>
+    </section>
+
+
+
+
+
+    <div class="container"
+         th:if="${(recentQuests == null or recentQuests.isEmpty()) and (activeChallenges == null or activeChallenges.isEmpty())}">
+        <div class="card no-content">
+            <h3>🌟 Prêt pour l'aventure ?</h3>
+            <p>Tu n'as pas encore de quêtes ou de défis actifs.</p>
+            <a th:href="@{/quests}" class="btn btn-large">Explorer les quêtes</a>
         </div>
     </div>
 
