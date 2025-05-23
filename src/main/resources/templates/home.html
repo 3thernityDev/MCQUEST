@@ -121,31 +121,46 @@
             <p>Vous n’avez pas de défis en cours.</p>
         </div>
 
-        <!-- TOP 5 JOUEURS EN MODE PODIUM -->
+        <!-- TOP 5 JOUEURS EN MODE TABLEAU, style identique à leaderboard.html -->
         <section>
-            <h2>🏅 Top 5 joueurs</h2>
-            <div class="podium">
-                <div th:each="idx : ${#numbers.sequence(0,4)}"
-                     class="podium__item"
-                     th:classappend="' podium__item--' + (idx + 1)">
-                    <div class="podium__rank" th:text="${idx + 1}">1</div>
+            <h2>🏆 Classement - Top 5 joueurs</h2>
 
-                    <!-- Utilisateur existant -->
-                    <div th:if="${topUsers != null and topUsers.size() > idx}">
-                        <div class="podium__name" th:text="${topUsers[idx].username}">Pseudo</div>
-                        <div class="podium__stats"
-                             th:text="'Niv ' + ${topUsers[idx].level} + ' • ' + ${topUsers[idx].xp} + ' XP'">
-                        </div>
-                    </div>
-
-                    <!-- Place libre -->
-                    <div th:unless="${topUsers != null and topUsers.size() > idx}" class="podium__placeholder">
-                        <div class="podium__name">Disponible</div>
-                        <div class="podium__stats">En attente</div>
-                    </div>
-                </div>
+            <!-- Si pas de joueurs -->
+            <div th:if="${topUsers == null or #lists.isEmpty(topUsers)}" class="empty-state">
+                <i class="fas fa-user-friends"></i>
+                <p>Aucun joueur à afficher.</p>
             </div>
+
+            <!-- Sinon on affiche jusqu'à 5 joueurs -->
+            <table th:if="${topUsers != null and !#lists.isEmpty(topUsers)}" class="table">
+                <thead>
+                <tr>
+                    <th>Rang</th>
+                    <th>Joueur</th>
+                    <th>XP</th>
+                    <th>Niveau</th>
+                </tr>
+                </thead>
+                <tbody id="leaderboardBody">
+                <!-- Joue jusqu’au 5 premiers, même si la liste est plus longue -->
+                <tr th:each="u, iterStat : ${topUsers}" th:if="${iterStat.count <= 5}">
+                    <td th:text="${iterStat.count}">1</td>
+                    <td th:text="${u.username}">Pseudo</td>
+                    <td th:text="${u.xp}">0</td>
+                    <td th:text="${u.level}">1</td>
+                </tr>
+                <!-- Lignes “Disponibles” si moins de 5 joueurs -->
+                <tr th:if="${topUsers.size() < 5}"
+                    th:each="i : ${#numbers.sequence(topUsers.size()+1,5)}">
+                    <td th:text="${i}">n</td>
+                    <td class="empty-state">Disponible</td>
+                    <td class="empty-state">–</td>
+                    <td class="empty-state">–</td>
+                </tr>
+                </tbody>
+            </table>
         </section>
+
 
     </div>
 </main>
