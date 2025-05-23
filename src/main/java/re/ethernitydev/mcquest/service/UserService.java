@@ -1,6 +1,8 @@
 package re.ethernitydev.mcquest.service;
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -24,6 +26,9 @@ public class UserService {
 
     @Autowired
     private QuestCompletionRepository questCompletionRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public Optional<User> getUserById(Long id) {
         return userRepository.findById(id);
@@ -81,5 +86,23 @@ public class UserService {
 
     public long getUserQuestCount(User user) {
         return questCompletionRepository.countByUser(user);
+    }
+
+
+    public boolean checkPassword(User user, String rawPassword) {
+        return passwordEncoder.matches(rawPassword, user.getPassword());
+    }
+
+    @Transactional
+    public void updateProfile(User u,
+                              String newUsername,
+                              String newEmail,
+                              String newPassword) {
+        u.setUsername(newUsername);
+        u.setEmail(newEmail);
+        if (newPassword != null && !newPassword.isBlank()) {
+            u.setPassword(passwordEncoder.encode(newPassword));
+        }
+        userRepository.save(u);
     }
 }
