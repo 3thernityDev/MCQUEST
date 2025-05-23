@@ -182,5 +182,58 @@
         });
     });
 </script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        console.log("🔍 Quest script chargé");
+        const grid        = document.getElementById('questGrid');
+        const searchInput = document.getElementById('questSearch');
+        const sortSelect  = document.getElementById('questSort');
+        const toggleBtn   = document.getElementById('toggleCompleted');
+        console.log({ grid, searchInput, sortSelect, toggleBtn });
+
+        if (!grid || !searchInput || !sortSelect || !toggleBtn) {
+            console.error("❌ Un ou plusieurs éléments introuvables, vérifie les IDs");
+            return;
+        }
+
+        const cards       = Array.from(grid.children);
+        let showCompleted = true;
+
+        function filterAndSort() {
+            const term    = searchInput.value.toLowerCase();
+            const sortVal = sortSelect.value;
+            let visible = cards.filter(card => {
+                const title     = card.dataset.title.toLowerCase();
+                const author    = card.dataset.author.toLowerCase();
+                const matchesSearch = title.includes(term) || author.includes(term);
+                const completed = card.dataset.completed === 'true';
+                const matchesToggle = showCompleted || !completed;
+                return matchesSearch && matchesToggle;
+            });
+            visible.sort((a, b) => {
+                const xpA = +a.dataset.xp, xpB = +b.dataset.xp;
+                if (sortVal === 'xpDesc') return xpB - xpA;
+                if (sortVal === 'xpAsc')  return xpA - xpB;
+                return cards.indexOf(a) - cards.indexOf(b);
+            });
+            grid.innerHTML = '';
+            visible.forEach(c => grid.appendChild(c));
+        }
+
+        searchInput.addEventListener('input', filterAndSort);
+        sortSelect.addEventListener('change', filterAndSort);
+        toggleBtn.addEventListener('click', () => {
+            showCompleted = !showCompleted;
+            toggleBtn.textContent = showCompleted
+                ? 'Masquer les complétées'
+                : 'Afficher les complétées';
+            filterAndSort();
+        });
+
+        filterAndSort();
+        console.log("✅ Script quests actif");
+    });
+</script>
+
 
 </html>

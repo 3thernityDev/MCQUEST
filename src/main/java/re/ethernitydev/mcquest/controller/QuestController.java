@@ -12,6 +12,7 @@ import re.ethernitydev.mcquest.service.QuestService;
 import re.ethernitydev.mcquest.service.UserService;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/quests")
@@ -32,27 +33,19 @@ public class QuestController {
         // Toujours la liste complète
         model.addAttribute("quests", questService.getAllQuests());
 
-        // On récupère correctement les quêtes complétées
+        // On récupère et mappe les quêtes complétées en entités Quest
         if (currentUser != null) {
-            List<QuestCompletion> done = questService.getUserCompletions(currentUser);
-            model.addAttribute("completedQuests", done);
+            List<QuestCompletion> completions = questService.getUserCompletions(currentUser);
+            List<Quest> completedQuests = completions.stream()
+                    .map(QuestCompletion::getQuest)
+                    .collect(Collectors.toList());
+            model.addAttribute("completedQuests", completedQuests);
         } else {
-            model.addAttribute("completedQuests", List.<Quest>of());
+            model.addAttribute("completedQuests", List.of());
         }
 
         model.addAttribute("currentUser", currentUser);
         return "quests/list";
-    }
-
-
-    @GetMapping("/available")
-    public String getAvailableQuests(Model model, Authentication authentication) {
-        User currentUser = userService.getUserByUsername(authentication.getName()).orElse(null);
-        if (currentUser != null) {
-            model.addAttribute("quests", questService.getAvailableQuests(currentUser));
-        }
-        model.addAttribute("currentUser", currentUser);
-        return "quests/available";
     }
 
     @GetMapping("/create")
@@ -86,7 +79,6 @@ public class QuestController {
         return "quests/details";
     }
 
-
     @PostMapping("/{id}/complete")
     public String completeQuest(@PathVariable Long id, Authentication authentication) {
         Quest quest = questService.getQuestById(id).orElse(null);
@@ -96,18 +88,9 @@ public class QuestController {
             try {
                 questService.completeQuest(user, quest);
             } catch (RuntimeException e) {
+                // ignore
             }
         }
         return "redirect:/quests/" + id;
-    }
-
-    @GetMapping("/my")
-    public String getMyQuests(Model model, Authentication authentication) {
-        User currentUser = userService.getUserByUsername(authentication.getName()).orElse(null);
-        if (currentUser != null) {
-            model.addAttribute("createdQuests", questService.getQuestsByAuthor(currentUser));
-            model.addAttribute("completedQuests", questService.getUserCompletions(currentUser));
-        }
-        return "quests/my";
     }
 }

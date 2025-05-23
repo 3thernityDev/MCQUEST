@@ -9,30 +9,65 @@
 <body>
 <main layout:fragment="content">
   <div class="container">
-    <h1>🗺️ Quêtes disponibles</h1>
 
-    <div th:if="${quests.isEmpty()}">
+    <div class="header-actions mb-6 flex justify-between items-center">
+      <h1 class="page-title">🗺️ Quêtes disponibles</h1>
+      <div class="flex gap-4 items-center">
+        <input id="questSearch" type="text" placeholder="Rechercher..." class="input" />
+        <select id="questSort" class="select">
+          <option value="recent">Les plus récentes</option>
+          <option value="xpDesc">XP décroissante</option>
+          <option value="xpAsc">XP croissante</option>
+        </select>
+        <button id="toggleCompleted" class="btn btn-secondary">
+          Masquer les complétées
+        </button>
+        <a th:href="@{/quests/create}" class="btn btn-primary">
+          <i class="fas fa-plus"></i> Créer une quête
+        </a>
+      </div>
+    </div>
+
+    <div th:if="${quests.isEmpty()}" class="empty-state">
+      <i class="fas fa-scroll"></i>
       <p>Aucune quête disponible pour le moment.</p>
     </div>
 
-    <div class="grid grid-2" th:each="quest : ${quests}">
-      <div class="card">
-        <div class="card-header">
-          <h3 th:text="${quest.title}">Titre</h3>
-          <p>Créée par <span th:text="${quest.author.username}">Auteur</span></p>
+    <div class="grid grid-2 gap-6" id="questGrid"
+         th:if="${!quests.isEmpty()}">
+
+      <div class="card hover-card"
+           th:each="quest : ${quests}"
+           th:data-xp="${quest.xpReward}"
+           th:data-title="${quest.title}"
+           th:data-author="${quest.author.username}"
+           th:data-completed="${#lists.contains(completedQuests, quest)}">
+        <div class="card-header flex justify-between items-center">
+          <h3 class="card-title" th:text="${quest.title}">Titre</h3>
+          <span class="badge badge-primary">
+            <i class="fas fa-star"></i>
+            <span th:text="${quest.xpReward}">100</span> XP
+          </span>
         </div>
         <div class="card-content">
-          <p th:text="${quest.description}">Description</p>
+          <p th:text="${#strings.abbreviate(quest.description, 120)}">
+            Description tronquée…
+          </p>
         </div>
-        <div class="card-footer">
-                    <span class="badge badge-primary">
-                        <i class="fas fa-star"></i> <span th:text="${quest.xpReward}">100</span> XP
-                    </span>
-          <a th:href="@{/quests/{id}(id=${quest.id})}" class="btn btn-small">Voir</a>
+        <div class="card-footer flex justify-between items-center">
+          <p class="small-text">
+            Créée par <strong th:text="${quest.author.username}">Auteur</strong>
+          </p>
+          <a th:href="@{/quests/{id}(id=${quest.id})}" class="btn btn-small">
+            Voir
+          </a>
         </div>
       </div>
+
     </div>
   </div>
 </main>
+
+
 </body>
 </html>
