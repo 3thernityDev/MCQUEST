@@ -8,20 +8,34 @@
 </head>
 <body>
 <main layout:fragment="content">
-  <div class="container">
-    <h1>➕ Nouvelle quête</h1>
-    <form th:action="@{/quests/create}" th:object="${quest}" method="post">
-      <label for="title">Titre</label>
-      <input type="text" id="title" th:field="*{title}" required>
+  <div class="container max-w-lg mx-auto">
+    <h1 class="text-2xl font-bold mb-6">➕ Nouvelle quête</h1>
+    <form th:action="@{/quests/create}" th:object="${quest}" method="post" class="space-y-6">
+      <div class="form-group">
+        <label for="title" class="block text-sm font-medium text-gray-200">Titre de la quête</label>
+        <input type="text" id="title" th:field="*{title}" placeholder="Ex: Sauver la citadelle"
+               class="input mt-1 block w-full" required>
+        <div th:if="${#fields.hasErrors('title')}" class="text-red-500 text-sm mt-1" th:errors="*{title}"></div>
+      </div>
 
-      <label for="description">Description</label>
-      <textarea id="description" th:field="*{description}" required></textarea>
+      <div class="form-group">
+        <label for="description" class="block text-sm font-medium text-gray-200">Description détaillée</label>
+        <textarea id="description" th:field="*{description}" rows="6" placeholder="Décris la quête et ses objectifs..."
+                  class="input mt-1 block w-full" required></textarea>
+        <div th:if="${#fields.hasErrors('description')}" class="text-red-500 text-sm mt-1" th:errors="*{description}"></div>
+      </div>
 
-      <label for="xpReward">XP attribué</label>
-      <input type="number" id="xpReward" th:field="*{xpReward}" min="0" required>
+      <div class="form-group">
+        <label for="xpReward" class="block text-sm font-medium text-gray-200">Récompense en XP</label>
+        <input type="number" id="xpReward" th:field="*{xpReward}" min="0" placeholder="100"
+               class="input mt-1 w-32" required>
+        <div th:if="${#fields.hasErrors('xpReward')}" class="text-red-500 text-sm mt-1" th:errors="*{xpReward}"></div>
+      </div>
 
-      <button type="submit" class="btn">Créer la quête</button>
-      <button type="reset" class="btn">Annuler</button>
+      <div class="flex justify-end gap-4 pt-4 border-t border-gray-700">
+        <a th:href="@{/quests}" class="btn btn-secondary">Annuler</a>
+        <button type="submit" class="btn btn-primary">Créer la quête</button>
+      </div>
     </form>
   </div>
 </main>
