@@ -1,7 +1,11 @@
 package re.ethernitydev.mcquest.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -29,6 +33,9 @@ public class ProfileController {
 
     @Autowired
     private TitleService titleService;
+
+    @Autowired
+    private UserDetailsService userDetailsService;
 
 
     @GetMapping
@@ -99,6 +106,16 @@ public class ProfileController {
                 form.getEmail(),
                 form.getNewPassword()
         );
+
+        UserDetails updatedUser =
+                userDetailsService.loadUserByUsername(form.getUsername());
+
+        Authentication newAuth = new UsernamePasswordAuthenticationToken(
+                updatedUser,
+                auth.getCredentials(),
+                updatedUser.getAuthorities()
+        );
+        SecurityContextHolder.getContext().setAuthentication(newAuth);
 
         return "redirect:/profile?success";
     }
